@@ -6,6 +6,10 @@ import com.dynamix.organization.Organization
 import com.dynamix.role.Role
 import com.dynamix.user.AppUser
 import com.dynamix.usertorole.AppUserToRole
+import com.imperil.mapitem.BoardMap;
+import com.imperil.mapitem.Continent;
+import com.imperil.mapitem.Territory;
+import com.imperil.setup.DefaultMapConstants;
 
 
 class BootStrap {
@@ -67,6 +71,21 @@ class BootStrap {
     new Requestmap(url: '/oauth/**', configAttribute: 'permitAll').save(failOnError:true)
     new Requestmap(url: '/**', configAttribute: 'IS_AUTHENTICATED_FULLY').save(failOnError:true)
     // END Requestmap
+
+    // Default maps
+    Set<Continent> boardMapContinents = []
+
+    DefaultMapConstants.CONTINENTS.each { String continentName, List<String> territoryList ->
+      Set<Territory> continentTerritories = []
+      territoryList.each {
+        Territory territory = Territory.findByName(it)?:new Territory(name: it, description:it).save(failOnError: true);
+        continentTerritories.add(territory);
+      }
+      Continent continent = Continent.findByName(continentName)?:new Continent(name: continentName, description:continentName, territories:continentTerritories).save(failOnError: true)
+      boardMapContinents.add(continent)
+    }
+    BoardMap boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)?:new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME, continents:boardMapContinents).save(failOnError: true)
+    // END default maps
 
   }
   def destroy = {

@@ -15,7 +15,7 @@ hibernate {
 environments {
   development {
     dataSource {
-      dbCreate = "create-drop"
+      dbCreate = "create"
       driverClassName = "org.postgresql.Driver"
       dialect = org.hibernate.dialect.PostgreSQLDialect
       url = "jdbc:postgresql://localhost:5432/imperil"
