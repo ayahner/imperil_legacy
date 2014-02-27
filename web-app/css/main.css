@@ -75,6 +75,12 @@ body {
 .footer {
 	text-align: right;
 	font-weight: bold;
+/*	position: absolute;
+	bottom: 0;
+  padding-right: 0;
+  padding-left: 0;
+	width:100%;
+	*/
 }
 
 .accordion {
