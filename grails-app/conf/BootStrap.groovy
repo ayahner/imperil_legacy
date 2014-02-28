@@ -18,8 +18,6 @@ class BootStrap {
 
   def init = { servletContext ->
     // Check whether the test data already exists.
-    int numberOfAgreementsToGenerate = 20
-
     Random random = new Random();
     long now =System.currentTimeMillis();
 
@@ -66,7 +64,7 @@ class BootStrap {
     // Requestmap
     Requestmap.findByUrl('/js/**')?:new Requestmap(url: '/js/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/css/**')?:new Requestmap(url: '/css/**', configAttribute: 'permitAll').save(failOnError:true)
-    Requestmap.findByUrl('/image/**')?:new Requestmap(url: '/images/**', configAttribute: 'permitAll').save(failOnError:true)
+    Requestmap.findByUrl('/images/**')?:new Requestmap(url: '/images/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/login/**')?:new Requestmap(url: '/login/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/oauth/**')?:new Requestmap(url: '/oauth/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/**')?:new Requestmap(url: '/**', configAttribute: 'IS_AUTHENTICATED_FULLY').save(failOnError:true)
