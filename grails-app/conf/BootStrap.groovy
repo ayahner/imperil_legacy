@@ -18,8 +18,6 @@ class BootStrap {
 
   def init = { servletContext ->
     // Check whether the test data already exists.
-    int numberOfAgreementsToGenerate = 20
-
     Random random = new Random();
     long now =System.currentTimeMillis();
 
