@@ -64,12 +64,12 @@ class BootStrap {
     // END Default role creation/mapping
 
     // Requestmap
-    new Requestmap(url: '/js/**', configAttribute: 'permitAll').save(failOnError:true)
-    new Requestmap(url: '/css/*', configAttribute: 'permitAll').save(failOnError:true)
-    new Requestmap(url: '/images/**', configAttribute: 'permitAll').save(failOnError:true)
-    new Requestmap(url: '/login/**', configAttribute: 'permitAll').save(failOnError:true)
-    new Requestmap(url: '/oauth/**', configAttribute: 'permitAll').save(failOnError:true)
-    new Requestmap(url: '/**', configAttribute: 'IS_AUTHENTICATED_FULLY').save(failOnError:true)
+    Requestmap.findByUrl('/js/**')?:new Requestmap(url: '/js/**', configAttribute: 'permitAll').save(failOnError:true)
+    Requestmap.findByUrl('/css/**')?:new Requestmap(url: '/css/*', configAttribute: 'permitAll').save(failOnError:true)
+    Requestmap.findByUrl('/image/**')?:new Requestmap(url: '/images/**', configAttribute: 'permitAll').save(failOnError:true)
+    Requestmap.findByUrl('/login/**')?:new Requestmap(url: '/login/**', configAttribute: 'permitAll').save(failOnError:true)
+    Requestmap.findByUrl('/oauth/**')?:new Requestmap(url: '/oauth/**', configAttribute: 'permitAll').save(failOnError:true)
+    Requestmap.findByUrl('/**')?:new Requestmap(url: '/**', configAttribute: 'IS_AUTHENTICATED_FULLY').save(failOnError:true)
     // END Requestmap
 
     // Default maps
