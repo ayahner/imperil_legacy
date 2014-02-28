@@ -65,7 +65,7 @@ class BootStrap {
 
     // Requestmap
     Requestmap.findByUrl('/js/**')?:new Requestmap(url: '/js/**', configAttribute: 'permitAll').save(failOnError:true)
-    Requestmap.findByUrl('/css/**')?:new Requestmap(url: '/css/*', configAttribute: 'permitAll').save(failOnError:true)
+    Requestmap.findByUrl('/css/**')?:new Requestmap(url: '/css/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/image/**')?:new Requestmap(url: '/images/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/login/**')?:new Requestmap(url: '/login/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/oauth/**')?:new Requestmap(url: '/oauth/**', configAttribute: 'permitAll').save(failOnError:true)
