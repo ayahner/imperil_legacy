@@ -36,6 +36,8 @@
 <script src="${resource(dir: 'jquery', file: 'jquery-1.10.2.js')}"></script>
 <script src="${resource(dir: 'bootstrap-v2.3.2/js', file: 'bootstrap.js')}"></script>
 <script src="${resource(dir: 'angular', file: 'angular.js')}"></script>
+<script src="${resource(dir: 'angular', file: 'angular-route.js')}"></script>
+<script src="${resource(dir: 'angular', file: 'angular-sanitize.js')}"></script>
 <script src="${resource(dir: 'angular', file: 'angular-animate.js')}"></script>
 <script src="${resource(dir: 'angular-ui-bootstrap', file: 'ui-bootstrap-0.7.0.js')}"></script>
 <script	src="${resource(dir: 'angular-ui-ng-grid', file: 'ng-grid-2.0.7.debug.js')}"></script>
