@@ -1,4 +1,4 @@
-var app = angular.module('main', [ 'ngAnimate', 'ui.bootstrap','ngGrid' ]);
+var app = angular.module('main', [ 'ngRoute', 'ngAnimate', 'ui.bootstrap','ngGrid' ]);
 
 app.directive('focusMe', function($timeout, $parse) {
 	  return {

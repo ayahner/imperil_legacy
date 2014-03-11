@@ -21,6 +21,7 @@ environments {
       url = "jdbc:postgresql://localhost:5432/imperil"
       username = "imperil"
       password = "password"
+      loggingSql = true
     }
   }
   test {
