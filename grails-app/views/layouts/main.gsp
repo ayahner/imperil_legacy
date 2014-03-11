@@ -16,23 +16,25 @@
 	href="${resource(dir: 'images', file: 'favicon.ico')}" />
 
 <link rel="stylesheet"
-	href="${resource(dir: 'css', file: 'initial.css')}" type="text/css">
+	href="${resource(dir: 'css', file: 'initial.css')}" type="text/css"/>
 <link rel="stylesheet"
-	href="${resource(dir: 'css', file: 'mobile.css')}" type="text/css">
+	href="${resource(dir: 'css', file: 'mobile.css')}" type="text/css"/>
 <link rel="stylesheet" href="${resource(dir: 'css', file: 'index.css')}"
-	type="text/css">
+	type="text/css"/>
+<link rel="stylesheet"
+  href="${resource(dir: 'css', file: 'imperil.css')}" type="text/css"/>
 <link rel="stylesheet"
 	href="${resource(dir: 'bootstrap-v2.3.2/css', file: 'bootstrap.css')}"
-	type="text/css">
+	type="text/css"/>
 <link rel="stylesheet"
 	href="${resource(dir: 'angular/docs/css', file: 'animations.css')}"
-	type="text/css">
+	type="text/css"/>
 <link rel="stylesheet"
 	href="${resource(dir: 'angular-ui-ng-grid', file: 'ng-grid.css')}"
-	type="text/css">
+	type="text/css"/>
 
 <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}"
-	type="text/css">
+	type="text/css"/>
 <script src="${resource(dir: 'jquery', file: 'jquery-1.10.2.js')}"></script>
 <script src="${resource(dir: 'bootstrap-v2.3.2/js', file: 'bootstrap.js')}"></script>
 <script src="${resource(dir: 'angular', file: 'angular.js')}"></script>

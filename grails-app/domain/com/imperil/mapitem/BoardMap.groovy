@@ -1,8 +1,15 @@
 package com.imperil.mapitem
 
-class BoardMap {
-  static hasMany = [continents:Continent, territoryEdges:TerritoryEdge]
+import com.imperil.match.Match;
 
+class BoardMap {
+  Date dateCreated,lastUpdated
+  Integer version
   String name, description
-  static constraints = { name blank: false }
+
+  static hasMany = [continents:Continent, territoryEdges:TerritoryEdge, matches:Match]
+  static constraints = {
+    name blank: false
+    name unique:true
+  }
 }

@@ -10,7 +10,8 @@ class UrlMappings {
     "/sample"(view:"/sample")
     "/pages/home"(view:"/pages/home")
     "/pages/match"(view:"/pages/match")
-    "/greet"(view:"/includes/greet")
+    "/pages/settings"(view:"/pages/settings")
+    "/pages/tools"(view:"/pages/tools")
     "500"(view:'/error')
   }
 }

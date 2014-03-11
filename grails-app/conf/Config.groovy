@@ -88,6 +88,7 @@ grails {
 
 grails.converters.encoding = "UTF-8"
 // grails.converters.json.default.deep = true
+grails.converters.default.pretty.print = true
 // scaffolding templates configuration
 grails.scaffolding.templates.domainSuffix = 'Instance'
 
@@ -122,7 +123,7 @@ log4j = {
   // Example of changing the log pattern for the default console appender:
   //
   //appenders {
-  //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+  console name:'stdout', layout:pattern(conversionPattern: '%d{dd MMM yyyy HH:mm:ss} %p %c{1}(%L) %m%n')
   //}
 
   error  'org.codehaus.groovy.grails.web.servlet',        // controllers
@@ -136,6 +137,7 @@ log4j = {
       'org.springframework',
       'org.hibernate',
       'net.sf.ehcache.hibernate'
+  trace 'grails.app.controllers.com.imperil'
 }
 
 

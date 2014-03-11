@@ -1,9 +1,16 @@
 package com.imperil.mapitem
 
-import org.aspectj.weaver.ast.HasAnnotation;
+import java.util.Date;
+
 
 class Continent {
-  static hasMany = [territories:Territory]
+  Date dateCreated,lastUpdated
+  Integer version
   String name, description
-  static constraints = { name blank: false }
+
+  static hasMany = [territories:Territory]
+  static constraints = {
+    name blank: false
+    name unique:true
+  }
 }
