@@ -9,7 +9,6 @@
 				        <accordion-heading>{{territory.name}}</accordion-heading>
 				    </accordion-group>
 				  </accordion>
-        <div ng-repeat="territory in continent.territories">{{territory.name}}</div>
     </accordion-group>
   </accordion>
   

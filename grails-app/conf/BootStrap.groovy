@@ -93,12 +93,11 @@ class BootStrap {
     Set<Continent> boardMapContinents = []
 
     DefaultMapConstants.CONTINENTS.each { String continentName, List<String> territoryList ->
+      Continent continent = Continent.findByName(continentName)?:new Continent(name: continentName, description:continentName+' description').save(failOnError: true);
       Set<Territory> continentTerritories = []
       territoryList.each {
-        Territory territory = Territory.findByName(it)?:new Territory(name: it, description:it+' description').save(failOnError: true);
-        continentTerritories.add(territory);
+        Territory territory = Territory.findByName(it)?:new Territory(name: it, description:it+' description', continent:continent).save(failOnError: true);
       }
-      Continent continent = Continent.findByName(continentName)?:new Continent(name: continentName, description:continentName+' description', territories:continentTerritories).save(failOnError: true)
       boardMapContinents.add(continent)
     }
     BoardMap boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)?:new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description', continents:boardMapContinents).save(failOnError: true)

@@ -191,13 +191,22 @@ var MatchGameController = function($rootScope, $scope, $http, $routeParams, $log
 	$scope.continents = []
 	
 	$http.get('/match/show', {params:{id:$routeParams.id}}).success(function (data, status, headers, config) {
-		console.log('success: match: '+data.name+' for map: '+data.boardMap.name+' has ('+data.boardMap.continents+') continents');
+		console.log('success: match: '+data.name+' for map: '+data.boardMap.name+' has ('+data.boardMap.continents.length+') continents');
  		$scope.match = data
  		$scope.boardMap = data.boardMap
  		$scope.continents = data.boardMap.continents
-	
+ 		for (var index=0;index<$scope.continents.length;index++) {
+ 			var continent = $scope.continents[index]
+ 			console.log('requesting territories for continent('+continent.name+')');
+ 			$http.get('/territory/list', {params:{continentId:continent.id}}).success(function (cdata, cstatus, cheaders, cconfig) {
+ 				console.log('success: territory: '+cdata.name+' for continent: '+continent.name);
+ 		 		continent.territories = cdata
+ 			}).error(function(cdata, cstatus, cheaders, cconfig) {
+ 		 		console.log('error in  for id: '+cdata.id);
+ 		    });
+ 		}
 	}).error(function(data, status, headers, config) {
- 		console.log('error in createMatch for id: '+data.id);
+ 		console.log('error in showMatch for id: '+data.id);
     });
 	$scope.selectedTerritory= {}
 	

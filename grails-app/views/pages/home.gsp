@@ -1,4 +1,3 @@
-
 <div ng-controller="ModalMatchCtrl">
 	<script type="text/ng-template" id="createMatchContent.html">
         <div class="modal-header">
