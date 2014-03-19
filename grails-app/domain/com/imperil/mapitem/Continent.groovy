@@ -9,8 +9,9 @@ class Continent {
   String name, description
 
   static hasMany = [territories:Territory]
+  static belongsTo = [boardMap:BoardMap]
   static constraints = {
     name blank: false
-    name unique:true
+    boardMap(nullable:false)
   }
 }

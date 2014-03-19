@@ -3,7 +3,10 @@ package com.imperil.match
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
 
+import com.dynamix.user.AppUser
 import com.imperil.player.Player
+import com.imperil.player.PlayerPreferences
+import com.imperil.rules.RuleHelper
 
 class MatchController {
 
@@ -28,27 +31,35 @@ class MatchController {
   def listMine() {
     def currentUser = springSecurityService.currentUser
     log.trace("listMine called for user ${currentUser}")
-    def query = Match.where {
-      players.user.id == currentUser.id
+
+    def matches = Match.withCriteria {
+      players { eq 'user.id', currentUser.id }
     }
-    def results = query.findAll()
-    render results as JSON
+
+    render matches as JSON
   }
 
   def save() {
     log.debug("\$request.JSON: $request.JSON")
-    List playerIds = request.JSON.players.collect {
+    List playerPreferenceIds = request.JSON.players.collect {
       Long.valueOf(it.id)
     }
-    def existingPlayers = Player.findAllByIdInList(playerIds)
 
     log.debug("\$params: $params")
     def match = new Match(
         name: request.JSON.name,
         description : request.JSON.description,
-        players : existingPlayers
-        ).save( failOnError : true )
+        players : existingPlayerPreferences
+        )
+    def existingPlayerPreferences = PlayerPreferences.findAllByIdInList(playerPreferenceIds)
+    Collections.shuffle(existingPlayerPreferences)
+    existingPlayerPreferences.each{
+      new Player(it).addToMatch(match)
+    }
+    match.save( failOnError : true )
+
+    RuleHelper.initMatch(match)
     log.debug("\$match: ${match as JSON})")
-    render match as JSON
+    render Match.get(match.id) as JSON
   }
 }

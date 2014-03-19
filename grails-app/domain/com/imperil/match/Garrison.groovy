@@ -12,4 +12,8 @@ class Garrison {
 
   static belongsTo = [territory:Territory, match:Match]
   static mappedBy = [territory:'none', match:'none']
+  static constraints = {
+    territory(nullable:false)
+    match(nullable:false)
+  }
 }
