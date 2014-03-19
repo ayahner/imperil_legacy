@@ -41,7 +41,7 @@ environments {
   }
   production {
     dataSource {
-      dbCreate = "update"
+      dbCreate = "create"
       driverClassName = "org.postgresql.Driver"
       dialect = org.hibernate.dialect.PostgreSQLDialect
       uri = new URI(System.env.DATABASE_URL?:"postgres://imperil:password@localhost/imperil")
