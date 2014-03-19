@@ -137,7 +137,7 @@ log4j = {
       'org.springframework',
       'org.hibernate',
       'net.sf.ehcache.hibernate'
-  trace 'grails.app.controllers.com.imperil'
+  trace 'grails.app'
 }
 
 
