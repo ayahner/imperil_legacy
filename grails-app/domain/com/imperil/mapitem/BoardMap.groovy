@@ -8,6 +8,7 @@ class BoardMap {
   String name, description
 
   static hasMany = [continents:Continent, territoryEdges:TerritoryEdge, matches:Match]
+
   static constraints = {
     name blank: false
     name unique:true

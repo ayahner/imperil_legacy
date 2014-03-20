@@ -6,11 +6,14 @@ import com.dynamix.oauth.OAuthID
 import com.dynamix.organization.Organization
 import com.dynamix.role.Role
 import com.dynamix.usertorole.AppUserToRole
+import com.imperil.player.Player
+import com.imperil.player.PlayerPreferences;
 
 
 class AppUser {
   static belongsTo = [organization: Organization]
-  static hasMany = [oAuthIDs: OAuthID]
+  static hasMany = [oAuthIDs: OAuthID, players:Player, playerPreferences:PlayerPreferences]
+
   static constraints = {
     username blank: false, unique: true
     password blank: false

@@ -10,8 +10,6 @@ class PlayerPreferences {
   String name, description
   AppUser user
 
-  static belongsTo = [user:AppUser]
-
   static constraints = {
     name blank: false;
     name unique:true

@@ -13,9 +13,12 @@ class Match {
   Integer version
   String name, description
   List players
+  MatchStateEnum state
+  BoardMap boardMap
+  Player currentPlayer
 
   static hasMany = [players:Player]
-  static hasOne = [boardMap:BoardMap, currentPlayer:Player]
+  //  static hasOne = [currentPlayer:Player]
 
   //  static mapping = {
   //  }
