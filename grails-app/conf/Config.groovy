@@ -137,7 +137,15 @@ log4j = {
       'org.springframework',
       'org.hibernate',
       'net.sf.ehcache.hibernate'
-  trace 'grails.app'
+
+  // Set level for all application artifacts
+  info 'grails.app'
+  // Set for a specific controller in the default package
+
+  trace 'grails.app.controllers',
+      'grails.app.domain'
+
+
 }
 
 

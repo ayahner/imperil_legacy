@@ -12,6 +12,7 @@ class Player {
   Integer version
   String name, description
   Integer armyCount
+  Match match
   AppUser user
 
   Player(PlayerPreferences preferences) {
@@ -19,9 +20,6 @@ class Player {
     this.description=preferences.description
     this.user=preferences.user
   }
-
-  static belongsTo = [user:AppUser, match:Match]
-  static hasOne = [match:Match]
 
   static constraints = { name blank: false; }
 }

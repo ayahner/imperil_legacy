@@ -10,6 +10,7 @@ import com.imperil.mapitem.Territory
 import com.imperil.mapitem.TerritoryEdge
 import com.imperil.match.Garrison
 import com.imperil.match.Match
+import com.imperil.match.MatchStateEnum
 import com.imperil.player.Player
 import com.imperil.player.PlayerPreferences
 
@@ -98,9 +99,10 @@ class InitializationHelper {
     boardMap.continents=Continent.findAllByBoardMap(boardMap)
     //sample matches
     [
-      'Andrew vs Joe':[
+      'Andrew vs Joe vs Player1':[
         andrewPlayerPreferences,
-        joePlayerPreferences
+        joePlayerPreferences,
+        player1PlayerPreferences
       ], 'Andrew vs 2 players':[
         andrewPlayerPreferences,
         player1PlayerPreferences,
@@ -116,21 +118,26 @@ class InitializationHelper {
         joePlayerPreferences,
         player1PlayerPreferences,
         player2PlayerPreferences
-      ]].each {String matchName, List<AppUser> val ->
-      List<Player> players = val.collect{ PlayerPreferences pref ->
-        new Player(pref)
-      }
-      def match = Match.findByName(matchName)?:new Match(name: matchName, description:matchName+' description', boardMap:boardMap, players:players).save(failOnError: true);
-      log.debug("boardmap has ${boardMap?.continents?.size()} continents")
-      List<Territory> territories = boardMap.continents.collect{continent ->
-        log.debug("$continent.name: has ${continent.territories?.size()} territories");
-        continent.territories}
-      territories.flatten().each{ territory ->
-        Garrison g = new Garrison(armyCount:0)
-        g.match=match
-        g.territory = territory
-        g.save(failOnError: true)
-      }
+      ]].each {String matchName, List<PlayerPreferences> prefsList ->
+      InitializationHelper.generateMap(matchName, matchName, prefsList, boardMap)
     }
+  }
+
+  public static Match generateMap(String matchName, String matchDescription, List<PlayerPreferences> prefs, BoardMap boardMap) {
+    List<Player> players = prefs.collect{ PlayerPreferences pref ->
+      new Player(pref)
+    }
+    Collections.shuffle(players)
+    Match match = new Match(name: matchName, description:matchDescription, boardMap:boardMap, players:players, state:MatchStateEnum.INIT).save(failOnError: true);
+    match.currentPlayer=players.get(0)
+    match.save(failOnError:true)
+    List<Territory> territories = boardMap.continents.collect{Continent continent -> continent.territories }
+    territories.flatten().each{ territory ->
+      Garrison g = new Garrison(armyCount:0)
+      g.match=match
+      g.territory = territory
+      g.save(failOnError: true)
+    }
+    return match
   }
 }
