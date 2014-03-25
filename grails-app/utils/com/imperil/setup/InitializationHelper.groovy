@@ -13,6 +13,7 @@ import com.imperil.match.Match
 import com.imperil.match.MatchStateEnum
 import com.imperil.player.Player
 import com.imperil.player.PlayerPreferences
+import com.imperil.rules.RuleHelper;
 
 class InitializationHelper {
 
@@ -130,6 +131,7 @@ class InitializationHelper {
     Collections.shuffle(players)
     Match match = new Match(name: matchName, description:matchDescription, boardMap:boardMap, players:players, state:MatchStateEnum.INIT).save(failOnError: true);
     match.currentPlayer=players.get(0)
+    RuleHelper.initMatch(match)
     match.save(failOnError:true)
     List<Territory> territories = boardMap.continents.collect{Continent continent -> continent.territories }
     territories.flatten().each{ territory ->

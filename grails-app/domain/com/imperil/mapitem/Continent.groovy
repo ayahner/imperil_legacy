@@ -10,6 +10,7 @@ class Continent {
 
   static hasMany = [territories:Territory]
   static belongsTo = [boardMap:BoardMap]
+  static mapping = { sort "name" }
   static constraints = {
     name blank: false
     boardMap(nullable:false)

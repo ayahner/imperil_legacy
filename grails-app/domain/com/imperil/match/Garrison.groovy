@@ -8,7 +8,7 @@ class Garrison {
   Date dateCreated,lastUpdated
   Integer version
 
-  Long armyCount
+  Integer armyCount
 
   static belongsTo = [territory:Territory, match:Match]
   static mappedBy = [territory:'none', match:'none']

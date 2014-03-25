@@ -10,10 +10,20 @@ class TerritoryEdgeController {
     log.debug("index hit")
   }
 
-  def list() {
+  def edgeMap() {
     log.debug("list hit")
+    def boardMapId = params.boardMapId
+    BoardMap boardMap = BoardMap.get(boardMapId)
+    List<TerritoryEdge> edges = boardMap.territoryEdges
+    List<Territory> territories = Territory.withCriteria {
+    }
 
-    def result = TerritoryEdge.findAll()
+
+    def result = [
+      territories:Territory.findAllByBoardMap(boardMap),
+      edges:edges
+    ]
+
     render result as XML
   }
 }

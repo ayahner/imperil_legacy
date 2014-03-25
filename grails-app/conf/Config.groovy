@@ -111,10 +111,18 @@ environments {
   development {
     grails.logging.jul.usebridge = true
     grails.serverURL = "http://localhost:8080"
+    oauth.providers.facebook.key = '1491726954381036'
+    oauth.providers.facebook.secret = 'a6347303f9ce99bd202cc60d6c30c808'
+    oauth.providers.twitter.key = 'UMrdC55Gn5Wmxni9Q5kNqQ'
+    oauth.providers.twitter.secret = 'pRFEUUyMdVUTUmk07u5JlQ2wHtptUwAKn0PSqZdjA'
   }
   production {
     grails.logging.jul.usebridge = false
     grails.serverURL = "http://imperil.herokuapp.com"
+    oauth.providers.facebook.key = '502118066561182'
+    oauth.providers.facebook.secret = 'a51a5b380023bf4fbada9e9edc232a0a'
+    oauth.providers.twitter.key = 'yLHdR6BjH4tlVCgNEEiJEA'
+    oauth.providers.twitter.secret = 'NSIUUCm57aUhGVGRnfeK5JpV32eEBXl1tsitQzpGf4'
   }
 }
 
@@ -169,8 +177,6 @@ oauth {
   providers {
     facebook {
       api = org.scribe.builder.api.FacebookApi
-      key = '821731927843531'
-      secret = '54e2c548baa456636ed046f3e533b6bc'
       successUri = '/oauth/facebook/success'
       failureUri = '/oauth/facebook/error'
       callback = "${grails.serverURL}/oauth/facebook/callback"
@@ -186,8 +192,6 @@ oauth {
     }
     twitter {
       api = org.scribe.builder.api.TwitterApi.SSL
-      key = 'ZyiycjidG1Js5cXT5xDGg'
-      secret = 'eV6FJ8B9Ftc2O8LkpDFaH6TKOezo7LN0Hd9bNgRfU'
       successUri = '/oauth/twitter/success'
       failureUri = '/oauth/twitter/error'
       callback = "${grails.serverURL}/oauth/twitter/callback"

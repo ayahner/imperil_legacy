@@ -13,4 +13,5 @@ class BoardMap {
     name blank: false
     name unique:true
   }
+  static mapping = { sort "name" }
 }
