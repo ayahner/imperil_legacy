@@ -186,33 +186,41 @@ var ModalToolsInstanceCtrl = function($http, $scope, $modalInstance, $log, NavSe
 var MatchGameController = function($rootScope, $scope, $http, $routeParams, $log) {
 	$log.debug("routeParams: "+$routeParams.id)
 	$scope.match = {}
+	$scope.currentPlayer = {}
+	$scope.players = []
 	$scope.boardMap = {}
 	$scope.continents = []
+	$scope.territories = []
 	$scope.edgeMap={}
-	$http.get('/match/show', {params:{id:$routeParams.id}}).success(function (data, status, headers, config) {
-		console.log('success: match: '+data.name+' for map: '+data.boardMap.name+' has ('+data.boardMap.continents.length+') continents');
- 		$scope.match = data
- 		$scope.boardMap = data.boardMap
- 		$scope.continents = data.boardMap.continents
-		$http.get('/territoryEdge/list', {params:{boardMapId:data.boardMap.id}}).success(function (cdata, cstatus, cheaders, cconfig) {
-			console.log('success: territoryEdge: '+cdata);
-	 		$scope.edgeMap = cdata
-		}).error(function(cdata, cstatus, cheaders, cconfig) {
-	 		console.log('error in  for id: '+cdata.id);
-	    });
- 		for (var index=0;index<$scope.continents.length;index++) {
- 			var continent = $scope.continents[index]
- 			console.log('requesting territories for continent('+continent.name+')');
- 			$http.get('/territory/list', {params:{continentId:continent.id}}).success(function (cdata, cstatus, cheaders, cconfig) {
- 				console.log('success: territory: '+cdata.name+' for continent: '+continent.name);
- 		 		continent.territories = cdata
- 			}).error(function(cdata, cstatus, cheaders, cconfig) {
- 		 		console.log('error in  for id: '+cdata.id);
- 		    });
- 		}
-	}).error(function(data, status, headers, config) {
- 		console.log('error in showMatch for id: '+data.id);
-    });
 	$scope.selectedTerritory= {}
+
+	console.log('requesting: /match/show');
+		
+	$scope.refresh = function() {
+		console.log('refresh called')
+		$http.get('/match/show', {params:{id:$routeParams.id}}).success(function (data, status, headers, config) {
+			console.log('success: match: '+data.name+' for map: '+data.boardMap.name);
+	 		$scope.match = data
+	 		$scope.currentPlayer = data.currentPlayer
+	 		$scope.players = data.players
+	 		$scope.boardMap = data.boardMap
+	 		$scope.continents = data.boardMap.continents
+	 		$scope.territories = data.boardMap.territories
+	 		$scope.edgeMap=data.boardMap.edgeMap
+		}).error(function(data, status, headers, config) {
+	 		console.log('error in showMatch for id: '+data.id);
+	    });		
+	}
 	
+	$scope.addArmy = function(match, player, territory, count) {
+ 		console.log('adding '+count+' armies to '+territory.name+' for player: '+player.name);
+ 		$http.post('/match/addArmies', {params:{match:match, player:player, territory:territory, count:count}}).success(function (data, status, headers, config) {
+ 			console.log('success: added: '+data.name+' for map: '+data.boardMap.name);
+ 			refresh()
+ 		}).error(function(data, status, headers, config) {
+ 	 		console.log('error in addArmies for id: '+data.id);
+ 	    });
+	};
+
+	$scope.refresh();
 }

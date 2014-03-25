@@ -13,13 +13,19 @@ class Player {
   String name, description
   Integer armyCount
   Match match
+
   AppUser user
 
   Player(PlayerPreferences preferences) {
     this.name=preferences.name
     this.description=preferences.description
     this.user=preferences.user
+    this.armyCount=0
   }
 
-  static constraints = { name blank: false; }
+  static constraints = {
+    name blank: false
+    armyCount nullable: false
+  }
+  static mapping = { sort "name" }
 }

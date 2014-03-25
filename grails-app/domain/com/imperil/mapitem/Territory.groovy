@@ -1,5 +1,7 @@
 package com.imperil.mapitem
 
+import com.imperil.match.Garrison;
+
 import groovy.transform.ToString
 
 @ToString
@@ -7,6 +9,7 @@ class Territory {
   Date dateCreated,lastUpdated
   Integer version
   String name, description
+  Garrison garrison
 
   static belongsTo = [continent:Continent]
   static hasMany = [sourceTerritoryEdges:TerritoryEdge, destinationTerritoryEdges:TerritoryEdge]
@@ -15,4 +18,5 @@ class Territory {
     name blank: false
     name unique:true
   }
+  static mapping = { sort "name" }
 }

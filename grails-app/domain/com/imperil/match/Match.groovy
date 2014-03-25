@@ -9,6 +9,7 @@ import com.imperil.player.Player
 
 @ToString
 class Match {
+  Long id
   Date dateCreated,lastUpdated
   Integer version
   String name, description
@@ -18,10 +19,8 @@ class Match {
   Player currentPlayer
 
   static hasMany = [players:Player]
-  //  static hasOne = [currentPlayer:Player]
 
-  //  static mapping = {
-  //  }
+  static mapping = { sort "name" }
 
   static constraints = {
     name blank: false

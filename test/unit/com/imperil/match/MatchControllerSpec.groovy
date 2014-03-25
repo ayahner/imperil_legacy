@@ -48,7 +48,7 @@ class MatchControllerSpec extends Specification {
 
     then:
     def match = Match.findByName(MATCH)
-    def matches = controller.listMine()
+
     match != null
   }
 }
