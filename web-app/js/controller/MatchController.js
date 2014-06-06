@@ -12,6 +12,17 @@ var MatchController = function($rootScope, $scope, $http, $routeParams, $log) {
   $scope.edgeMap = {}
   $scope.selectedTerritory = {}
 
+  var mapOptions = {
+    center : new google.maps.LatLng(-34.397, 150.644),
+    zoom : 8
+  };
+
+  $scope.map = new google.maps.Map(document.getElementById("matchMap"), mapOptions);
+
+  // function initialize() {
+  // }
+  // google.maps.event.addDomListener(window, 'load', initialize);
+
   console.log('requesting: /match/show');
 
   $scope.enableAddArmy = function(territory) {
