@@ -73,12 +73,10 @@ i.left.rotated.fortyfive.icon,i.counterclockwise.rotated.fortyfive.icon
 }
 
 /**
-.hidden-item {
-	max-height: 0;
-	visibility: hidden;
-	display: none;
-}
-*/
+ * Google Maps CSS entries
+ */
+#matchMap { height: 200px }
+
 /*******************************
             Global
 *******************************/

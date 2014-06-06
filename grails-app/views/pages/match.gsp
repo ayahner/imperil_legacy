@@ -1,6 +1,6 @@
 <div class="ui basic segment" ng-controller="MatchController">
-  <div class="ui two column grid">
-    <div class="column">
+  <div class="ui two column stackable grid">
+    <div class="six wide column">
       <div class="ui blue segment">
         <div class="ui blue ribbon label" ng-click="showMatchDetails = !showMatchDetails">Match: {{match.name}}</div>
         <div class="ui description">{{match.description}}</div>
@@ -73,10 +73,12 @@
         </div>
       </div>
     </div>
-    <div class="column">
+    <div class="ten wide column">
       <div class="ui green segment">
-        <div class="ui green ribbon label" ng-click="showMatchDetails = !showMatchDetails">Game Map</div>
-        The game map should be here
+        <div class="ui green ribbon label" ng-click="showMapDetails = !showMapDetails">Game Map</div>
+        <div class="ui segment">
+        <div id="matchMap" class="hidable" ng-class="{ 'hidden': showMapDetails }"></div>
+        </div>
       </div>
     </div>
   </div>
