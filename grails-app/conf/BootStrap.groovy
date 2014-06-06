@@ -1,98 +1,87 @@
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityService
 
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.web.context.support.WebApplicationContextUtils
 
 import com.dynamix.organization.Organization
-import com.dynamix.user.AppUser;
-import com.imperil.mapitem.BoardMap;
-import com.imperil.mapitem.Continent;
-import com.imperil.mapitem.Territory;
-import com.imperil.mapitem.TerritoryEdge;
+import com.dynamix.user.AppUser
+import com.imperil.mapitem.BoardMap
+import com.imperil.mapitem.Continent
+import com.imperil.mapitem.Territory
+import com.imperil.mapitem.TerritoryEdge
+import com.imperil.marshalling.CustomObjectMarshallers
+import com.imperil.match.Garrison
 import com.imperil.match.Match
-import com.imperil.player.Player;
+import com.imperil.player.Player
+import com.imperil.player.PlayerPreferences
 import com.imperil.setup.InitializationHelper
 
 class BootStrap {
-  def springSecurityService
+  SpringSecurityService springSecurityService
+  CustomObjectMarshallers customObjectMarshallers
   GrailsApplication grailsApplication
 
   def init = { servletContext ->
     def springContext = WebApplicationContextUtils.getWebApplicationContext( servletContext )
 
-    JSON.createNamedConfig('semideep') { JSONConfig ->
+    JSON.createNamedConfig('semishallow') { JSONConfig ->
       JSONConfig.registerObjectMarshaller(BoardMap) { BoardMap it ->
-        def returnMap = [:]
-        returnMap['id'] = it.id
-        returnMap['name'] = it.name
-        returnMap['description'] = it.description
-        def continents = it.continents
-        def territories = it.continents.collect { it.territories }.flatten()
-        def edges = it.territoryEdges
-        returnMap['totalContinents'] = continents?.size()
-        returnMap['continents'] = continents
-        returnMap['edgeMap'] = [
-          territoryCount:(territories?.size()),
-          edgeCount:(edges?.size()),
-          territories:territories,
-          edges:edges
-        ]
-        return returnMap
+        return customObjectMarshallers.getReturnMap(it);
       }
       JSONConfig.registerObjectMarshaller(Continent) { Continent it ->
-        def returnMap = [:]
-        returnMap['id'] = it.id
-        returnMap['name'] = it.name
-        returnMap['description'] = it.description
-        returnMap['territories'] = it.territories
-        return returnMap
+        return customObjectMarshallers.getReturnMap(it);
       }
       JSONConfig.registerObjectMarshaller(Territory) { Territory it ->
-        def returnMap = [:]
-        returnMap['id'] = it.id
-        returnMap['name'] = it.name
-        returnMap['continent'] = it.continent?.name
-        returnMap['description'] = it.description
-        returnMap['armyCount'] = it.garrison?.armyCount
-        return returnMap
+        return customObjectMarshallers.getReturnMap(it);
       }
       JSONConfig.registerObjectMarshaller(TerritoryEdge) { TerritoryEdge it ->
-        def returnMap = [:]
-        returnMap['id'] = it.id
-        returnMap['sourceContinentName'] = it.sourceTerritory?.continent?.name
-        returnMap['sourceTerritoryName'] = it.sourceTerritory?.name
-        returnMap['sourceTerritoryId'] = it.sourceTerritory?.id
-        returnMap['destinationContinentName'] = it.destinationTerritory?.continent?.name
-        returnMap['destinationTerritoryName'] = it.destinationTerritory?.name
-        returnMap['destinationTerritoryId'] = it.destinationTerritory?.id
-        returnMap['boardMapId'] = it.boardMap?.id
-        return returnMap
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(Garrison) { Garrison it ->
+        return customObjectMarshallers.getReturnMap(it);
       }
       JSONConfig.registerObjectMarshaller(Match) { Match it ->
-        def returnMap = [:]
-        returnMap['id'] = it.id
-        returnMap['name'] = it.name
-        returnMap['description'] = it.description
-        returnMap['state'] = it.state.toString()
-        returnMap['currentPlayer'] = it.currentPlayer
-        returnMap['players'] = it.players
-        returnMap['boardMap'] = it.boardMap
-        return returnMap
+        return customObjectMarshallers.getReturnMap(it);
       }
       JSONConfig.registerObjectMarshaller(Player) { Player it ->
-        def returnMap = [:]
-        returnMap['id'] = it.id
-        returnMap['name'] = it.name
-        returnMap['description'] = it.description
-        returnMap['armyCount'] = it.armyCount
-        returnMap['user'] = it.user
-        return returnMap
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(PlayerPreferences) { PlayerPreferences it ->
+        return customObjectMarshallers.getReturnMap(it);
       }
       JSONConfig.registerObjectMarshaller(AppUser) { AppUser it ->
-        def returnMap = [:]
-        returnMap['id'] = it.id
-        returnMap['username'] = it.username
-        return returnMap
+        return customObjectMarshallers.getReturnMap(it);
+      }
+    }
+
+    JSON.createNamedConfig('semideep') { JSONConfig ->
+      JSONConfig.registerObjectMarshaller(BoardMap) { BoardMap it ->
+        return customObjectMarshallers.getReturnMapWithEdgeMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(Continent) { Continent it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(Territory) { Territory it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(TerritoryEdge) { TerritoryEdge it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(Garrison) { Garrison it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(Match) { Match it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(Player) { Player it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(PlayerPreferences) { PlayerPreferences it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(AppUser) { AppUser it ->
+        return customObjectMarshallers.getReturnMap(it);
       }
     }
 

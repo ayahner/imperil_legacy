@@ -1,37 +1,32 @@
-package com.imperil.rules
+package com.imperil.rule
 import com.imperil.match.Match
+import com.imperil.match.MatchStateEnum
 import com.imperil.player.Player
+import com.imperil.setup.RuleConstants
 
 
 public class RuleHelper {
 
-  public static void initMatch(Match match) {
-    switch (match.players.size()) {
-      case 3:
-        match.players.each { Player player ->
-          player.armyCount = 35
-        }
-        break
-      case 4:
-        match.players.each { Player player ->
-          player.armyCount = 30
-        }
-        break
-      case 5:
-        match.players.each { Player player ->
-          player.armyCount = 25
-        }
-        break
-      case 6:
-        match.players.each { Player player ->
-          player.armyCount = 20
-        }
-        break
-      default:
-        break
-    }
+  public static Integer getValueAsInteger(Rule rule, Integer defaultValue) {
+    if (rule == null) return defaultValue;
+    return Integer.parseInt(rule.value)
+  }
+  public static Double getValueAsDouble(Rule rule, Double defaultValue) {
+    if (rule == null) return defaultValue;
+    return Double.parseDouble(rule.value)
+  }
+  public static Integer getValue(Rule rule, String defaultValue) {
+    if (rule == null) return defaultValue;
+    return rule.value
+  }
+
+  public static void initMatch(Match match, RuleGroup ruleGroup) {
+
     match.players.each { Player player ->
+      Rule rule = ruleGroup.rules?.get(RuleConstants.RULE_KEY_STARTING_ARMY_COUNT+"."+match.players.size())
+      player.armyCount = RuleHelper.getValueAsInteger(rule, 1);
       player.save(failOnError:true)
     }
+    match.state = MatchStateEnum.CHOOSING_TERRITORIES;
   }
 }

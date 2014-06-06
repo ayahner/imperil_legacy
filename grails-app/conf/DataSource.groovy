@@ -21,7 +21,7 @@ environments {
       url = "jdbc:postgresql://localhost:5432/imperil"
       username = "imperil"
       password = "password"
-      loggingSql = true
+      loggingSql = false
     }
   }
   test {
@@ -32,7 +32,7 @@ environments {
       url = "jdbc:postgresql://localhost:5432/imperilTest"
       username = "imperilTest"
       password = "password"
-      loggingSql = true
+      loggingSql = false
     }
     //    dataSource {
     //      dbCreate = "create-drop"

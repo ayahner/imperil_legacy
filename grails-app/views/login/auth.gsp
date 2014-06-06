@@ -1,111 +1,88 @@
 <html>
 <head>
-	<meta name='layout' content='main'/>
-	<title><g:message code="springSecurity.login.title"/></title>
-	
-    <script src="${resource(dir: 'js', file: 'dynamix-auth.js')}"></script>	
-  		
-	<style type='text/css' media='screen'>
-	#footerOauthImages{
-		display:none;
-	}
-	
-	#login {
-		margin: 15px 0px;
-		padding: 0px;
-		text-align: center;
-	}
-
-	#login .inner {
-		width: 340px;
-		padding-bottom: 6px;
-		margin: 60px auto;
-		text-align: left;
-	}
-
-	#login .inner .fheader {
-		padding: 18px 26px 14px 26px;
-		background-color: #eee;
-		margin: 0px 0 14px 0;
-		color: #2e3741;
-		font-size: 18px;
-		font-weight: bold;
-	}
-
-	#login .inner .cssform p {
-		clear: left;
-		margin: 0;
-		padding: 4px 0 3px 0;
-		padding-left: 105px;
-		margin-bottom: 20px;
-		height: 1%;
-	}
-
-	#login .inner .cssform input[type='text'] {
-		width: 150px;
-	}
-
-	#login .inner .cssform label {
-		font-weight: bold;
-		float: left;
-		text-align: right;
-		margin-left: -105px;
-		width: 110px;
-		padding-top: 3px;
-		padding-right: 10px;
-	}
-
-	#login #remember_me_holder {
-		padding-left: 75px;
-	}
-
-	#login #submit {
-		margin-left: 15px;
-	}
-
-	#login #remember_me_holder label {
-		float: none;
-		margin-left: 0;
-		text-align: left;
-		width: 200px
-	}
-
-	#login .inner .login_message {
-		padding: 6px 25px 20px 25px;
-		color: #c33;
-	}
-
-	#login .inner .text_ {
-		width: 150px;
-	}
-
-	#login .inner .chk {
-		height: 12px;
-	}
-	
-	.main-body{
-	 	min-height: 310px;
-	}
-	
-@media screen and (max-width: 25em) {
-	#login .inner {
-		margin: 30px auto;
-	}
-	.main-body{
-	 	min-height: 290px;
-	}
-}
-	
-	</style>
+<meta name='layout' content='main' />
+<title><g:message code="springSecurity.login.title" /></title>
+<r:require module="common" />
 </head>
 
 <body>
-<div id='login'>
-<div class="view-container main-body">
-	<div class='inner' ng-controller="LoginCtrl">
-		<div class="slide-reveal" ng-include="template.url"/>
+	<div class="ui three column grid">
+		<div class="column"></div>
+		<div class="column">
+			<form action='/j_spring_security_check' method='POST'
+				class="ui form segment">
+				<div class="ui error message"></div>
+				<div class="ui inverted dimmer"
+					ng-class="{true: 'active', false: 'disabled'}[loading]">
+					<div class="ui text loader">Logging in...</div>
+				</div>
+				<h1>
+					<g:message code="springSecurity.login.header" />
+				</h1>
+				<div class="field">
+					<label for="Username">Username</label>
+					<div class="ui left labeled icon input">
+						<input id="Username" name="j_username" type="text"
+							placeholder="Username" ng-model="user.username"> <i
+							class="user icon"></i>
+						<div class="ui corner label">
+							<i class="asterisk red icon"></i>
+						</div>
+					</div>
+				</div>
+				<div class="field">
+					<label for="Password">Password</label>
+					<div class="ui left icon input">
+						<input id="Password" name="j_password" type="password"
+							ng-model="user.password"> <i class="lock icon"></i>
+						<div class="ui corner label">
+							<i class="asterisk red icon"></i>
+						</div>
+					</div>
+				</div>
+				<div class="ui blue submit button">Login</div>
+				<div class="ui right floated icon buttons">
+					<oauth:connect class="ui facebook icon button" provider="facebook"
+						id="facebook-connect-link">
+						<i class="facebook icon"></i>
+					</oauth:connect>
+					<oauth:connect class="ui google plus icon button"
+						provider="google" id="google-connect-link">
+						<i class="google plus icon"></i>
+					</oauth:connect>
+					<oauth:connect class="ui twitter icon button" provider="twitter"
+						id="twitter-connect-link">
+						<i class="twitter icon"></i>
+					</oauth:connect>
+				</div>
+			</form>
+		</div>
 	</div>
-	</div>
-</div>
+	<script>
+    (function($) {
+      $('.ui.form').form({
+        username : {
+          identifier : 'Username',
+          rules : [ {
+            type : 'empty',
+            prompt : 'Please enter a username'
+          } ]
+        },
+        password : {
+          identifier : 'Password',
+          rules : [ {
+            type : 'empty',
+            prompt : 'Please enter a password'
+          }, {
+            type : 'length[3]',
+            prompt : 'Password needs to be atleast 6 characters long'
+          } ]
+        }
+      }, {
+        on : 'blur',
+        inline : 'true'
+      });
+    }(jQuery));
+  </script>
 </body>
 </html>

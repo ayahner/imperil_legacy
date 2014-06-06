@@ -1,13 +1,16 @@
 package com.dynamix.user
 
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityService
 
-import com.dynamix.util.Action;
+import com.dynamix.util.Action
 import com.dynamix.util.Header
 import com.dynamix.util.NavigationUI
-import com.dynamix.util.SecurityUtils;
+import com.dynamix.util.SecurityUtils
 
 class AppUserController {
+  SpringSecurityService  springSecurityService
+
   static allowedMethods = [resetPassword: "POST"]
 
   static scaffold = true
@@ -42,6 +45,11 @@ class AppUserController {
 
   //Ignore me
   static def navOrder = navAccordionHeader?.order + "-" +navAccordionSubHeader?.order
+
+  def currentUser() {
+    def result = springSecurityService.currentUser
+    JSON.use('semideep') { render result as JSON }
+  }
 
   def resetPassword() {
     Long id = SecurityUtils.getCurrentUserId();

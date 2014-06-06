@@ -7,7 +7,7 @@ import com.dynamix.organization.Organization
 import com.dynamix.role.Role
 import com.dynamix.usertorole.AppUserToRole
 import com.imperil.player.Player
-import com.imperil.player.PlayerPreferences;
+import com.imperil.player.PlayerPreferences
 
 
 class AppUser {
@@ -66,6 +66,29 @@ class AppUser {
   String toString(){
     return username
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((username == null) ? 0 : username.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) return false
+    if (this.is(obj)) return true
+    if (!(obj instanceof AppUser)) return false
+    if (!obj.canEqual(this)) return false
+    if (username != obj.username) return false
+    return true;
+  }
+
+  public boolean canEqual(java.lang.Object other) {
+    return other instanceof AppUser
+  }
+
 
   //These are here b/c the Controller template cannot refer the Controller instance directly
   static def navStates = AppUserController.navStates

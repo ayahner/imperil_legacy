@@ -1,38 +1,53 @@
-  <div class="footer" role="contentinfo">
-    <div id="footerOauthImages" class="footer-oauth-images">
+<div class="ui bottom">
+<div class="ui centered segment">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Imperil Web Footer -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-4109882380147451"
+     data-ad-slot="7977664907"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script></div>
+  <div class="ui menu">
+    <div class="item">
+      <div class="copyright">
+        <g:message code="application.title" />
+        &copy;2014&nbsp;&nbsp;
+      </div>
+    </div>
+    <div class="right menu">
+
       <s2o:ifLoggedInWith provider="facebook">
-        <img
-          src="${resource(dir: 'images/app/auth', file: 'facebook_icon.png')}"
-          alt="Facebook" width="25px" height="25px">
+        <div class="ui facebook icon default cursor button">
+          <i class="facebook icon"></i>
+        </div>
       </s2o:ifLoggedInWith>
       <s2o:ifNotLoggedInWith provider="facebook">
-        <img class="desaturate"
-          src="${resource(dir: 'images/app/auth', file: 'facebook_icon.png')}"
-          alt="Facebook" width="25px" height="25px">
+        <div class="ui icon item">
+          <i class="facebook icon"></i>
+        </div>
       </s2o:ifNotLoggedInWith>
-
       <s2o:ifLoggedInWith provider="google">
-        <img
-          src="${resource(dir: 'images/app/auth', file: 'google_icon.png')}"
-          alt="google" width="25px" height="25px">
+        <div class="ui google plus icon default cursor button">
+          <i class="google plus icon"></i>
+        </div>
       </s2o:ifLoggedInWith>
-      <s2o:ifNotLoggedInWith provider="google">
-        <img class="desaturate"
-          src="${resource(dir: 'images/app/auth', file: 'google_icon.png')}"
-          alt="google" width="25px" height="25px">
+      <s2o:ifNotLoggedInWith provider="google" class="ui icon">
+        <div class="ui icon item">
+          <i class="google plus icon"></i>
+        </div>
       </s2o:ifNotLoggedInWith>
-
       <s2o:ifLoggedInWith provider="twitter">
-        <img
-          src="${resource(dir: 'images/app/auth', file: 'twitter_icon.png')}"
-          alt="twitter" width="25px" height="25px">
+        <div class="ui twitter icon default cursor button">
+          <i class="twitter icon"></i>
+        </div>
       </s2o:ifLoggedInWith>
-      <s2o:ifNotLoggedInWith provider="twitter">
-        <img class="desaturate"
-          src="${resource(dir: 'images/app/auth', file: 'twitter_icon.png')}"
-          alt="twitter" width="25px" height="25px">
+      <s2o:ifNotLoggedInWith provider="twitter" class="ui icon">
+        <div class="ui icon item">
+          <i class="twitter icon"></i>
+        </div>
       </s2o:ifNotLoggedInWith>
     </div>
-    <g:message code="application.title" />
-    &copy;2014&nbsp;&nbsp;
   </div>
+</div>

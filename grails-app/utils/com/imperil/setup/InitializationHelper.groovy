@@ -13,7 +13,9 @@ import com.imperil.match.Match
 import com.imperil.match.MatchStateEnum
 import com.imperil.player.Player
 import com.imperil.player.PlayerPreferences
-import com.imperil.rules.RuleHelper;
+import com.imperil.rule.Rule
+import com.imperil.rule.RuleGroup
+import com.imperil.rule.RuleHelper
 
 class InitializationHelper {
 
@@ -68,6 +70,7 @@ class InitializationHelper {
     // END Default role creation/mapping
 
     // Requestmap
+    Requestmap.findByUrl('/semantic/**')?:new Requestmap(url: '/semantic/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/js/**')?:new Requestmap(url: '/js/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/css/**')?:new Requestmap(url: '/css/**', configAttribute: 'permitAll').save(failOnError:true)
     Requestmap.findByUrl('/images/**')?:new Requestmap(url: '/images/**', configAttribute: 'permitAll').save(failOnError:true)
@@ -76,9 +79,18 @@ class InitializationHelper {
     Requestmap.findByUrl('/**')?:new Requestmap(url: '/**', configAttribute: 'IS_AUTHENTICATED_FULLY').save(failOnError:true)
     // END Requestmap
 
+    //Default Rules
+    RuleGroup ruleGroup = new RuleGroup(name:RuleConstants.DEFAULT_RULE_GROUP_NAME, description:RuleConstants.DEFAULT_RULE_GROUP_NAME);
+    ruleGroup.rules=[:]
+    RuleConstants.DEFAULT_STARTING_ARMY_COUNT.eachWithIndex { count, i ->
+      ruleGroup.rules.put("${RuleConstants.RULE_KEY_STARTING_ARMY_COUNT}.${(i+3)}", new Rule(ruleGroup:ruleGroup, key:"${RuleConstants.RULE_KEY_STARTING_ARMY_COUNT}.${(i+3)}", value:count, type:Integer.class, name:"Starting armies for ${(i+3)} players"))
+    }
+    ruleGroup.save(failOnError:true)
+    //END Default Rules
+
     // Default maps
     BoardMap boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)?:
-        new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description').save(failOnError: true)
+        new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description', createdBy: andrewUser).save(failOnError: true)
     //    boardMap.continents=[]
     def continents = DefaultMapConstants.CONTINENTS.collect { String continentName, Map<String,Map<String,List<String>>> territoryList ->
       def continent = new Continent(name: continentName, description:continentName+' description', boardMap:boardMap).save(failOnError:true)
@@ -100,44 +112,71 @@ class InitializationHelper {
     boardMap.continents=Continent.findAllByBoardMap(boardMap)
     //sample matches
     [
-      'Andrew vs Joe vs Player1':[
-        andrewPlayerPreferences,
-        joePlayerPreferences,
-        player1PlayerPreferences
-      ], 'Andrew vs 2 players':[
-        andrewPlayerPreferences,
-        player1PlayerPreferences,
-        player2PlayerPreferences
+      'Andrew vs Joe vs Player1 Choosing':[
+        state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
+          andrewPlayerPreferences,
+          joePlayerPreferences,
+          player1PlayerPreferences
+        ]
+      ], 'Andrew vs 2 players Last Choice':[
+        state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
+          andrewPlayerPreferences,
+          player1PlayerPreferences,
+          player2PlayerPreferences
+        ]
       ],
       'Joe vs 2 players':[
-        joePlayerPreferences,
-        player1PlayerPreferences,
-        player2PlayerPreferences
+        state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
+          joePlayerPreferences,
+          player1PlayerPreferences,
+          player2PlayerPreferences
+        ]
       ],
-      'Free for All':[
-        andrewPlayerPreferences,
-        joePlayerPreferences,
-        player1PlayerPreferences,
-        player2PlayerPreferences
-      ]].each {String matchName, List<PlayerPreferences> prefsList ->
-      InitializationHelper.generateMap(matchName, matchName, prefsList, boardMap)
+      'Free for All Playing':[
+        state:MatchStateEnum.PLAYING, prefList:[
+          andrewPlayerPreferences,
+          joePlayerPreferences,
+          player1PlayerPreferences,
+          player2PlayerPreferences
+        ]
+      ]].each {String matchName, Map<String, Object> prefMap ->
+      InitializationHelper.generateMap(matchName, matchName, prefMap.prefList, boardMap, prefMap.state, ruleGroup)
     }
   }
 
-  public static Match generateMap(String matchName, String matchDescription, List<PlayerPreferences> prefs, BoardMap boardMap) {
+  public static Match generateMap(String matchName, String matchDescription, List<PlayerPreferences> prefs, BoardMap boardMap, MatchStateEnum state, RuleGroup ruleGroup) {
     List<Player> players = prefs.collect{ PlayerPreferences pref ->
       new Player(pref)
     }
     Collections.shuffle(players)
-    Match match = new Match(name: matchName, description:matchDescription, boardMap:boardMap, players:players, state:MatchStateEnum.INIT).save(failOnError: true);
+    Match match = new Match(name: matchName, description:matchDescription, boardMap:boardMap, players:players, state:state).save(failOnError: true);
+
+    if (state==MatchStateEnum.PLAYING) {
+      //init playing map to 0 armies per player
+      match.players.each { Player player ->
+        player.armyCount = 0
+        player.save(failOnError:true)
+      }
+    } else {
+      //init normal map to n armies per player
+      RuleHelper.initMatch(match, ruleGroup)
+    }
     match.currentPlayer=players.get(0)
-    RuleHelper.initMatch(match)
     match.save(failOnError:true)
     List<Territory> territories = boardMap.continents.collect{Continent continent -> continent.territories }
+    int playerIndex = 0
     territories.flatten().each{ territory ->
-      Garrison g = new Garrison(armyCount:0)
-      g.match=match
-      g.territory = territory
+      Integer armyCount = 0;
+      if (state==MatchStateEnum.PLAYING) {
+        //init playing map territories to all armies per garrison
+        armyCount=Math.floor(players.size()*players.get(0).armyCount/territories.size())
+      }
+      Player player = players.get(playerIndex++);
+      if (playerIndex>=players.size()) playerIndex = 0
+      Garrison g = new Garrison(
+          armyCount:armyCount,
+          match:match,
+          territory:territory);
       g.save(failOnError: true)
     }
     return match
