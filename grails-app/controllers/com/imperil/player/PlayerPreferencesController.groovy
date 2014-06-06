@@ -8,6 +8,7 @@ class PlayerPreferencesController {
   }
 
   def list() {
-    render PlayerPreferences.list() as JSON
+    def result = PlayerPreferences.list()
+    JSON.use('semideep') { render result as JSON }
   }
 }

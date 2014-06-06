@@ -56,7 +56,13 @@ grails.resources.adhoc.patterns = [
   '/images/*',
   '/css/*',
   '/js/*',
-  '/plugins/*'
+  '/plugins/*',
+]
+
+grails.resources.adhoc.excludes = [
+  '**/WEB-INF/**',
+  '**/META-INF/**',
+  '/semantic/**'
 ]
 
 // Legacy setting for codec used to encode data with ${}
@@ -152,8 +158,6 @@ log4j = {
 
   trace 'grails.app.controllers',
       'grails.app.domain'
-
-
 }
 
 

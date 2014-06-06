@@ -1,10 +1,12 @@
 package com.imperil.player
 
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityService
 
 import com.imperil.match.Match
 
 class PlayerController {
+  SpringSecurityService  springSecurityService
 
   def index() {
   }
@@ -12,6 +14,12 @@ class PlayerController {
   def show() {
     def paramId = params.id
     Player result = Player.get(paramId)
+    render result as JSON
+  }
+
+  def listMine() {
+    def currentUser = springSecurityService.currentUser
+    def result = Player.findAllByUser(currentUser)
     render result as JSON
   }
 

@@ -2,8 +2,6 @@ package com.imperil.match
 
 import groovy.transform.ToString
 
-import org.codehaus.groovy.grails.web.binding.ListOrderedSet
-
 import com.imperil.mapitem.BoardMap
 import com.imperil.player.Player
 
@@ -25,5 +23,26 @@ class Match {
   static constraints = {
     name blank: false
     name unique:true
+  }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) return false
+    if (this.is(obj)) return true
+    if (!(obj instanceof Match)) return false
+    if (!obj.canEqual(this)) return false
+    if (name != obj.name) return false
+    return true;
+  }
+
+  public boolean canEqual(java.lang.Object other) {
+    return other instanceof Match
   }
 }

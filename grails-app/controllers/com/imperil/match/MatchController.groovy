@@ -4,11 +4,11 @@ import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityService
 
 import com.imperil.mapitem.BoardMap
-import com.imperil.mapitem.Continent
 import com.imperil.mapitem.Territory
 import com.imperil.player.Player
 import com.imperil.player.PlayerPreferences
-import com.imperil.rules.RuleHelper
+import com.imperil.rule.RuleGroup
+import com.imperil.rule.RuleHelper
 import com.imperil.setup.DefaultMapConstants
 import com.imperil.setup.InitializationHelper
 
@@ -20,26 +20,29 @@ class MatchController {
   }
 
   def show() {
-    def paramId = params.id as Long
-    Match match = MatchHelper.loadMatch(paramId)
-    JSON.use('semideep') { render match as JSON }
+    Long paramId = params.id as Long
+    Match result = Match.get(paramId)
+    JSON.use('semideep') { render result as JSON }
   }
 
   def list() {
-    log.trace("list called for user ${session.user}")
-    def results = Match.list()
-    JSON.use('deep') { render results as JSON }
+    def currentUser = springSecurityService.currentUser
+    log.trace("list called for user ${currentUser}")
+    def result = Match.list()
+    JSON.use('deep') { render result as JSON }
   }
 
   def listMine() {
     def currentUser = springSecurityService.currentUser
     log.trace("listMine called for user ${currentUser}")
 
-    def matches = Match.withCriteria {
+    def result = Match.withCriteria {
       players { eq 'user.id', currentUser.id }
     }
 
-    render matches as JSON
+
+    JSON.use('semishallow') { render result as JSON }
+    //    render result as JSON
   }
 
   def save() {
@@ -47,14 +50,18 @@ class MatchController {
     List playerPreferenceIds = request.JSON.players.collect {
       Long.valueOf(it.id)
     }
-
     log.debug("\$params: $params")
+    def name=request.JSON.name
+    def description=request.JSON.name
 
     def boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)
-    def existingPlayerPreferences = PlayerPreferences.findAllByIdInList(playerPreferenceIds)
-    Collections.shuffle(existingPlayerPreferences)
-    Match match = InitializationHelper.generateMap(request.JSON.name, request.JSON.description, existingPlayerPreferences, boardMap)
-    RuleHelper.initMatch(match)
+    Set<PlayerPreferences> existingPlayerPreferences = PlayerPreferences.findAllByIdInList(playerPreferenceIds)
+    PlayerPreferences myPlayerPreferences = PlayerPreferences.findByUser(springSecurityService.currentUser)
+    existingPlayerPreferences.add(myPlayerPreferences)
+
+    RuleGroup ruleGroup = request.JSON.ruleGroupId?RuleGroup.get(request.JSON.ruleGroupId):RuleGroup.getAll().get(0);
+    Match match = InitializationHelper.generateMap(name, description, existingPlayerPreferences as List, boardMap, MatchStateEnum.INITIALIZING, ruleGroup)
+    RuleHelper.initMatch(match, ruleGroup)
     log.debug("\$match: ${match as JSON})")
     render Match.get(match.id) as JSON
   }
@@ -62,32 +69,45 @@ class MatchController {
   def addArmies() {
     log.debug("\$request.JSON: $request.JSON")
     def currentUser = springSecurityService.currentUser
-    Player player = Player.get(request.JSON.params.player.id)
+    Long matchId = request.JSON.params.match.id
+    Match match = Match.get(matchId)
+
+    Player currentPlayer = Player.get(match.currentPlayer.id)
 
     //validate current user is the user
-    if (currentUser.id != player.user.id) {
+    if (currentUser.id != currentPlayer.user.id) {
       log.debug("You are not the correct player to make this action")
       //      throw new Exception("You are not the correct player to make this action")
     }
 
-    Match match = Match.get(request.JSON.params.match.id)
-    Territory territory = Territory.get(request.JSON.params.territory.id)
+    Long territoryId = request.JSON.params.territory.id
     Integer count = request.JSON.params.count
-    log.debug("addArmies(${match.name}, ${player.name}, ${territory.name}, ${count})")
+
+    Territory territory = Territory.get(territoryId)
+
+    log.debug("addArmies(${match.name}, ${currentPlayer.name}, ${territory.name}, ${count})")
+
     Garrison garrison = Garrison.findByTerritoryAndMatch(territory, match)
-    player.armyCount -= count
+    //TODO: add rule for how many armys you can add initially
+    if (MatchStateEnum.CHOOSING_TERRITORIES == match.state && garrison.armyCount>0) {
+      render(status: 403, text: "${territory.name} is already claimed by ${garrison.owner?.name}")
+      return
+    }
+    currentPlayer.armyCount -= count
     garrison.armyCount += count
+    garrison.owner = currentPlayer
     if (!garrison.save()) {
-      garrison.errors.allErrors.each { println it }
+      garrison.errors.allErrors.each { log.error it }
     } else {
-      if (!player.save()) {
-        player.errors.allErrors.each { println it }
+      if (!currentPlayer.save()) {
+        currentPlayer.errors.allErrors.each { log.error it }
       }
     }
     MatchHelper.nextTurn(match);
     def result = [
-      match:MatchHelper.loadMatch(match.id),
-      player:player,
+      match:Match.get(match.id),
+      player:currentPlayer,
+      territory:territory,
       garrison:garrison
     ]
     JSON.use('semideep') { render result as JSON }

@@ -1,0 +1,184 @@
+/*******************************
+            Global
+*******************************/
+html,body {
+	font-size: 15px;
+	height: 100%;
+}
+
+body {
+	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial",
+		sans-serif;
+	background: #FFFFFF;
+	margin: 0px;
+	padding: 0px;
+	color: #555555;
+	text-rendering: optimizeLegibility;
+	min-width: 320px;
+}
+
+.ui.compact.list {
+	padding: 0em 0em 0em 1em;
+	margin: 0em
+}
+
+.ui.header {
+	font-family: 'Source Sans Pro', "Helvetica Neue", "Helvetica", "Arial",
+		sans-serif;
+}
+
+.default.cursor {
+	cursor: default;
+}
+
+.description {
+	padding: .25em 0em 0em 1em;
+	font-size: 0.875em;
+	font-style: italic;
+}
+
+.copyright {
+	font-size: 0.875em;
+	font-style: italic;
+}
+
+i.rotated.fortyfive.icon,i.right.rotated.fortyfive.icon,i.clockwise.rotated.fortyfive.icon
+	{
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+
+i.left.rotated.fortyfive.icon,i.counterclockwise.rotated.fortyfive.icon
+	{
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+}
+
+.hidable {
+  max-height: 200px;
+  transition: 1s;
+  overflow: hidden;
+}
+
+.large.hidable {
+  max-height: 10000px;
+}
+
+.hidable.hidden {
+  max-height: 0;
+}
+
+/**
+.hidden-item {
+	max-height: 0;
+	visibility: hidden;
+	display: none;
+}
+*/
+/*******************************
+            Global
+*******************************/
+
+/*-------------------
+        Sidebar
+--------------------*/
+#feed .sidebar {
+	overflow: visible;
+}
+
+/*-------------------
+        Grid
+--------------------*/
+#feed .grid {
+	height: 100%;
+}
+
+#feed>.grid>.column {
+	height: 100%;
+}
+
+/*-------------------
+       Inbox
+--------------------*/
+#feed .inbox.tab {
+	background-color: #FFFFFF;
+}
+
+#feed .inbox.tab .item {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+#feed .inbox.tab .item .rating {
+	margin-top: 0.2rem;
+}
+
+#feed .inbox.tab .item .description {
+	margin-left: 2em;
+}
+
+#feed .page {
+	float: right;
+	margin-top: 0.9em;
+}
+
+#feed .middle.column {
+	padding: 1em 2em;
+}
+
+#feed .middle.column h2 {
+	margin-top: 0em;
+}
+
+#feed .right.column {
+	padding: 1em 2em;
+	background-color: #FAFAFA;
+}
+
+/*******************************
+          Responsive
+*******************************/
+@media only screen and (max-width : 1000px) {
+	#feed .inbox .date {
+		float: none;
+		margin-bottom: 0.5em;
+	}
+}
+
+@media only screen and (max-width : 1250px) {
+	#feed .left.column>.menu .item {
+		font-size: 1rem;
+	}
+}
+
+/*-------------------
+       Social
+--------------------*/
+/* Facebook */
+.ui.facebook.default.cursor.button:hover {
+	background-color: #3B579D;
+}
+
+.ui.facebook.default.cursor.button:active {
+	background-color: #3B579D;
+}
+/* Twitter */
+.ui.twitter.default.cursor.button:hover {
+	background-color: #4092CC;
+}
+
+.ui.twitter.default.cursor.button:active {
+	background-color: #4092CC;
+}
+/* Google Plus */
+.ui.google.default.cursor.plus.button:hover {
+	background-color: #D34836;
+}
+
+.ui.google.default.cursor.plus.button:active {
+	background-color: #D34836;
+}

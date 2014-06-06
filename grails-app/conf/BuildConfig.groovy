@@ -54,15 +54,15 @@ grails.project.dependency.resolution = {
   }
 
   dependencies { // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
-    runtime 'org.postgresql:postgresql:9.3-1100-jdbc41' }
+    runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'  }
 
   plugins {
     // plugins for the build system only
-    build ":tomcat:7.0.47"
+    build ":tomcat:7.0.52.1"
 
     // plugins for the compile step
     compile ":joda-time:1.4"
-    compile ":scaffolding:2.0.1"
+    compile ":scaffolding:2.0.2"
     compile ':cache:1.1.1'
     compile ':spring-security-core:2.0-RC2'
     compile ":spring-mobile:0.5.1"
@@ -76,9 +76,9 @@ grails.project.dependency.resolution = {
     compile ":spring-security-oauth-twitter:0.1"
 
     // plugins needed at runtime but not for compilation
-    runtime ":hibernate:3.6.10.6" // or ":hibernate4:4.1.11.6"
+    runtime ":hibernate:3.6.10.10" // or ":hibernate4:4.3.4.1"
     runtime ":database-migration:1.3.8"
-    runtime ":resources:1.2.1"
+    runtime ":resources:1.2.7"
 
     // Uncomment these (or add new ones) to enable additional resources capabilities
     runtime ":zipped-resources:1.0.1"
