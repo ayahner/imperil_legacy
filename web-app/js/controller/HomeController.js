@@ -38,7 +38,17 @@ var HomeController = function($rootScope, $scope, $http, $routeParams, $log, Nav
       console.log('success refreshMaps()');
       $scope.myMaps = data
     }).error(function(data, status, headers, config) {
-      console.log('error in refreshMaps() for user');
+      console.log('error in refreshMaps()');
+    });
+  }
+
+  $scope.deleteBoardMap = function(event, id) {
+    console.log('deleteBoardMap() called for "/"')
+    $http.delete('/boardMap/delete?id='+id).success(function(data, status, headers, config) {
+      console.log('success deleteBoardMap()');
+      $scope.refreshMaps();
+    }).error(function(data, status, headers, config) {
+      console.log('error in deleteBoardMap()');
     });
   }
 

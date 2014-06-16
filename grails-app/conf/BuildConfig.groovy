@@ -62,7 +62,7 @@ grails.project.dependency.resolution = {
 
     // plugins for the compile step
     compile ":joda-time:1.4"
-    compile ":scaffolding:2.0.2"
+    compile ":scaffolding:2.0.3"
     compile ':cache:1.1.1'
     compile ':spring-security-core:2.0-RC2'
     compile ":spring-mobile:0.5.1"
@@ -76,8 +76,8 @@ grails.project.dependency.resolution = {
     compile ":spring-security-oauth-twitter:0.1"
 
     // plugins needed at runtime but not for compilation
-    runtime ":hibernate:3.6.10.10" // or ":hibernate4:4.3.4.1"
-    runtime ":database-migration:1.3.8"
+    runtime ":hibernate:3.6.10.13" // or ":hibernate4:4.3.4.1"
+    runtime ":database-migration:1.4.0"
     runtime ":resources:1.2.7"
 
     // Uncomment these (or add new ones) to enable additional resources capabilities

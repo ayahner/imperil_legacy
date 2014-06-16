@@ -7,7 +7,7 @@ class RuleGroup {
   Date dateCreated,lastUpdated
   Integer version
   String section, name, description
-  Map rules
+  Map rules = [:]
 
   static hasMany = [matches:Match, rules:Rule]
 

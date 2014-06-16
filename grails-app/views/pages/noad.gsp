@@ -1,1 +1,0 @@
-Advertise here!  <a href="mailto:andrew.yahner@gmail.com">Contact us</a> to place your ad here.

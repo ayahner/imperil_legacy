@@ -1,11 +1,8 @@
 package com.imperil.player
 
-import groovy.transform.ToString
-
 import com.dynamix.user.AppUser
 import com.imperil.match.Match
 
-@ToString(excludes="dateCreated,lastUpdated,version,user")
 class Player {
   Long id
   Date dateCreated,lastUpdated

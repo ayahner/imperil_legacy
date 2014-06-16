@@ -1,8 +1,6 @@
 package com.imperil.mapitem
 
-import org.hibernate.criterion.CriteriaSpecification;
-
-import grails.converters.XML
+import grails.converters.JSON
 
 class TerritoryEdgeController {
 
@@ -24,6 +22,6 @@ class TerritoryEdgeController {
       edges:edges
     ]
 
-    render result as XML
+    JSON.use('SIMPLE') { render result as JSON }
   }
 }

@@ -16,6 +16,6 @@ class TerritoryController {
     } else {
       result = Territory.list()
     }
-    render result as JSON
+    JSON.use('SIMPLE') { render result as JSON }
   }
 }

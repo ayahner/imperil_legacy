@@ -4,7 +4,10 @@
 var CreateMatchController = function($rootScope, $scope, $http, $location, $routeParams, $log) {
   $scope.availablePlayers = [];
   $scope.selectedPlayers = [];
+  $scope.availableBoardMaps = [];
+  $scope.selectedBoardMap = {};
   $scope.match = {};
+  
   $rootScope.$on('closeCreateMatchModal', function(event) {
     console.log('closeCreateMatchModal');
     $('.create.match.modal').modal('hide');    
@@ -36,8 +39,10 @@ var CreateMatchController = function($rootScope, $scope, $http, $location, $rout
 
   $scope.resetForm = function() {
     $scope.selectedPlayers = []
+    $scope.selectedBoardMap = {}
     $scope.match = {}
     $scope.refreshPlayers()
+    $scope.refreshBoardMaps()
     $('.create.match.form').form(clearValidationRules);
     $('.create.match.form').form('validate form');
 
@@ -50,6 +55,11 @@ var CreateMatchController = function($rootScope, $scope, $http, $location, $rout
   $scope.refreshPlayers = function() {
     $http.get('/playerPreferences/list').success(function(data) {
       $scope.availablePlayers = data
+    });
+  }
+  $scope.refreshBoardMaps = function() {
+    $http.get('/boardMap/list').success(function(data) {
+      $scope.availableBoardMaps = data
     });
   }
 
@@ -67,6 +77,18 @@ var CreateMatchController = function($rootScope, $scope, $http, $location, $rout
     $scope.selectedPlayers.push(player)
 
     console.log('selecting player: ' + player.name)
+  }
+
+  $scope.selectBoardMap = function(event, boardMap) {
+    console.log('selecting boardMap: ' + boardMap.name)
+    var currentTarget = $(event.currentTarget)
+    currentTarget.closest('table').find('tr').removeClass('active')
+    if ($scope.selectedBoardMap.id == boardMap.id) {
+      $scope.selectedBoardMap = {}
+    } else {
+      $scope.selectedBoardMap = boardMap
+      currentTarget.addClass('active')
+    }
   }
 
   var validationRules = {

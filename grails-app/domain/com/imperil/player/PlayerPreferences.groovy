@@ -3,6 +3,8 @@ package com.imperil.player
 import com.dynamix.user.AppUser
 
 class PlayerPreferences {
+  Long id
+
   Date dateCreated,lastUpdated
   Integer version
   String name, description

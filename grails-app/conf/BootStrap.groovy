@@ -25,7 +25,37 @@ class BootStrap {
   def init = { servletContext ->
     def springContext = WebApplicationContextUtils.getWebApplicationContext( servletContext )
 
-    JSON.createNamedConfig('semishallow') { JSONConfig ->
+    JSON.createNamedConfig('SIMPLE') { JSONConfig ->
+      JSONConfig.registerObjectMarshaller(BoardMap) { BoardMap it ->
+        return customObjectMarshallers.getReturnMapSimple(it);
+      }
+      JSONConfig.registerObjectMarshaller(Continent) { Continent it ->
+        return customObjectMarshallers.getReturnMapSimple(it);
+      }
+      JSONConfig.registerObjectMarshaller(Territory) { Territory it ->
+        return customObjectMarshallers.getReturnMapSimple(it);
+      }
+      JSONConfig.registerObjectMarshaller(TerritoryEdge) { TerritoryEdge it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(Garrison) { Garrison it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(Match) { Match it ->
+        return customObjectMarshallers.getReturnMapSimple(it);
+      }
+      JSONConfig.registerObjectMarshaller(Player) { Player it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(PlayerPreferences) { PlayerPreferences it ->
+        return customObjectMarshallers.getReturnMap(it);
+      }
+      JSONConfig.registerObjectMarshaller(AppUser) { AppUser it ->
+        return customObjectMarshallers.getReturnMapSimple(it);
+      }
+    }
+
+    JSON.createNamedConfig('DETAILED') { JSONConfig ->
       JSONConfig.registerObjectMarshaller(BoardMap) { BoardMap it ->
         return customObjectMarshallers.getReturnMap(it);
       }
@@ -55,7 +85,7 @@ class BootStrap {
       }
     }
 
-    JSON.createNamedConfig('semideep') { JSONConfig ->
+    JSON.createNamedConfig('VERY_DETAILED') { JSONConfig ->
       JSONConfig.registerObjectMarshaller(BoardMap) { BoardMap it ->
         return customObjectMarshallers.getReturnMapWithEdgeMap(it);
       }
@@ -84,6 +114,7 @@ class BootStrap {
         return customObjectMarshallers.getReturnMap(it);
       }
     }
+
 
     // Check whether the test data already exists.
     Random random = new Random();

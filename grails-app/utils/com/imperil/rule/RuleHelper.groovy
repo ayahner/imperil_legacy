@@ -25,7 +25,7 @@ public class RuleHelper {
     match.players.each { Player player ->
       Rule rule = ruleGroup.rules?.get(RuleConstants.RULE_KEY_STARTING_ARMY_COUNT+"."+match.players.size())
       player.armyCount = RuleHelper.getValueAsInteger(rule, 1);
-      player.save(failOnError:true)
+      player.save(failOnError:true, flush:true)
     }
     match.state = MatchStateEnum.CHOOSING_TERRITORIES;
   }

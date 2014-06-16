@@ -24,13 +24,17 @@
 <script src="/semantic/javascript/semantic.js"></script>
 <link rel="stylesheet" href="/semantic/css/semantic.css" />
 <script src="/js/Application.js"></script>
+<script src="/js/MapUtils.js"></script>
 <script src="/js/Config.js"></script>
 <script src="/js/Directive.js"></script>
 <script src="/js/Service.js"></script>
 <script src="/js/controller/MainController.js"></script>
 <script src="/js/controller/HomeController.js"></script>
 <script src="/js/controller/MatchController.js"></script>
+<script src="/js/controller/MatchBoardMapController.js"></script>
+<script src="/js/controller/EditBoardMapController.js"></script>
 <script src="/js/controller/CreateMatchController.js"></script>
+<script src="/js/controller/CreateBoardMapController.js"></script>
 <script>
   (function(i, s, o, g, r, a, m) {
     i['GoogleAnalyticsObject'] = r;
