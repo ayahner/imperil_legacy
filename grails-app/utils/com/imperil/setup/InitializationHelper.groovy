@@ -6,6 +6,7 @@ import com.dynamix.user.AppUser
 import com.dynamix.usertorole.AppUserToRole
 import com.imperil.mapitem.BoardMap
 import com.imperil.mapitem.Continent
+import com.imperil.mapitem.GeoLocation
 import com.imperil.mapitem.Territory
 import com.imperil.mapitem.TerritoryEdge
 import com.imperil.match.Garrison
@@ -16,6 +17,8 @@ import com.imperil.player.PlayerPreferences
 import com.imperil.rule.Rule
 import com.imperil.rule.RuleGroup
 import com.imperil.rule.RuleHelper
+
+
 
 class InitializationHelper {
 
@@ -89,13 +92,22 @@ class InitializationHelper {
     //END Default Rules
 
     // Default maps
-    BoardMap boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)?:
+    final BoardMap boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)?:
         new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description', createdBy: andrewUser).save(failOnError: true)
-    //    boardMap.continents=[]
     def continents = DefaultMapConstants.CONTINENTS.collect { String continentName, Map<String,Map<String,List<String>>> territoryList ->
       def continent = new Continent(name: continentName, description:continentName+' description', boardMap:boardMap).save(failOnError:true)
-      //      boardMap.continents<<continent
-      continent.territories=territoryList.collect { name, edges ->new Territory(name: name, description:name+' description', continent:continent).save(failOnError:true)}
+      continent.territories=territoryList.collect { name, edges ->
+        Territory territory = new Territory(name: name, description:name+' description', continent:continent).save(failOnError:true)
+        Map<String, List<GeoLocation>> territoryPropertyMap = TerritoryPropertyHelper.COUNTRY_LOCATIONS.get(name);
+        List<GeoLocation> locations = territoryPropertyMap?.geoLocations;
+        if (locations != null && locations.size()>0) {
+          locations.each {
+            it.territory = territory
+            it.save(failOnError:true)
+          }
+        }
+        return territory
+      }
     }
     DefaultMapConstants.CONTINENTS.collect { String continentName, Map<String,List<String>> territoryMap ->
       territoryMap.each { sourceName, destinationEdges ->
@@ -109,7 +121,7 @@ class InitializationHelper {
     }
 
     // END default maps
-    boardMap.continents=Continent.findAllByBoardMap(boardMap)
+    //    boardMap = BoardMap.get(boardMap.id)
     //sample matches
     [
       'Andrew vs Joe vs Player1 Choosing':[
@@ -140,6 +152,7 @@ class InitializationHelper {
           player2PlayerPreferences
         ]
       ]].each {String matchName, Map<String, Object> prefMap ->
+      //      BoardMap copy = BoardMapController.cloneBoardMap(matchName, matchName, boardMap, boardMap.createdBy)
       InitializationHelper.generateMap(matchName, matchName, prefMap.prefList, boardMap, prefMap.state, ruleGroup)
     }
   }
@@ -165,19 +178,25 @@ class InitializationHelper {
     match.save(failOnError:true)
     List<Territory> territories = boardMap.continents.collect{Continent continent -> continent.territories }
     int playerIndex = 0
-    territories.flatten().each{ territory ->
-      Integer armyCount = 0;
-      if (state==MatchStateEnum.PLAYING) {
-        //init playing map territories to all armies per garrison
-        armyCount=Math.floor(players.size()*players.get(0).armyCount/territories.size())
-      }
+    List flatList = territories.flatten()
+    flatList.each{ territory ->
       Player player = players.get(playerIndex++);
       if (playerIndex>=players.size()) playerIndex = 0
-      Garrison g = new Garrison(
-          armyCount:armyCount,
+      Garrison garrison = new Garrison(
           match:match,
-          territory:territory);
-      g.save(failOnError: true)
+          territory:territory,
+          armyCount:0,
+          );
+      if (state==MatchStateEnum.PLAYING) {
+        //init playing map territories to all armies per garrison
+        garrison.owner = player
+        Rule rule = ruleGroup.rules?.get(RuleConstants.RULE_KEY_STARTING_ARMY_COUNT+"."+match.players.size())
+        int playerArmyCount = RuleHelper.getValueAsInteger(rule, 10)
+
+        garrison.armyCount=Math.floor(players.size()*playerArmyCount/territories.size())
+      }
+
+      garrison.save(failOnError: true)
     }
     return match
   }

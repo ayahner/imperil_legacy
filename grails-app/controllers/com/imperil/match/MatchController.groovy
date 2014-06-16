@@ -22,14 +22,14 @@ class MatchController {
   def show() {
     Long paramId = params.id as Long
     Match result = Match.get(paramId)
-    JSON.use('semideep') { render result as JSON }
+    JSON.use('DETAILED') { render result as JSON }
   }
 
   def list() {
     def currentUser = springSecurityService.currentUser
     log.trace("list called for user ${currentUser}")
     def result = Match.list()
-    JSON.use('deep') { render result as JSON }
+    JSON.use('SIMPLE') { render result as JSON }
   }
 
   def listMine() {
@@ -41,8 +41,7 @@ class MatchController {
     }
 
 
-    JSON.use('semishallow') { render result as JSON }
-    //    render result as JSON
+    JSON.use('SIMPLE') { render result as JSON }
   }
 
   def save() {
@@ -63,7 +62,8 @@ class MatchController {
     Match match = InitializationHelper.generateMap(name, description, existingPlayerPreferences as List, boardMap, MatchStateEnum.INITIALIZING, ruleGroup)
     RuleHelper.initMatch(match, ruleGroup)
     log.debug("\$match: ${match as JSON})")
-    render Match.get(match.id) as JSON
+    def result = Match.get(match.id) as JSON
+    JSON.use('SIMPLE') { render result as JSON }
   }
 
   def addArmies() {
@@ -77,7 +77,9 @@ class MatchController {
     //validate current user is the user
     if (currentUser.id != currentPlayer.user.id) {
       log.debug("You are not the correct player to make this action")
-      //      throw new Exception("You are not the correct player to make this action")
+      throw new Exception("You are not the correct player to make this action")
+      render(status: 403, text: "You are not the correct player to make this action")
+      return
     }
 
     Long territoryId = request.JSON.params.territory.id
@@ -110,6 +112,6 @@ class MatchController {
       territory:territory,
       garrison:garrison
     ]
-    JSON.use('semideep') { render result as JSON }
+    JSON.use('SIMPLE') { render result as JSON }
   }
 }

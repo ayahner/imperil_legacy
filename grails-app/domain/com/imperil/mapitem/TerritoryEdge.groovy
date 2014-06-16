@@ -3,6 +3,8 @@ package com.imperil.mapitem
 
 
 class TerritoryEdge {
+  Long id
+
   Date dateCreated,lastUpdated
   Integer version
 

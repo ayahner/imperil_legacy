@@ -15,7 +15,7 @@ class ContinentController {
       render result as JSON
     } else {
       List<Continent> result = Continent.findAll()
-      render result as JSON
+      JSON.use('SIMPLE') { render result as JSON }
     }
   }
 }

@@ -7,13 +7,20 @@ imperilApp.controller('MainController', function($rootScope, $scope, $route, $ro
   $scope.$routeParams = $routeParams;
   $scope.navTo = NavService.navTo
   
-  $scope.openMatch = function(event) {
-    var id = event.currentTarget.id.substring(6)
+  $scope.openMatch = function(event, id) {
     $location.url('/match?id=' + id)
   }
 
+  $scope.openBoardMap = function(event, id) {
+    $location.url('/boardMap?id=' + id)
+  }
+
   $scope.openCreateMatch = function(event) {
-    $rootScope.$emit('openCreateMatchModal', event)
+    $scope.$emit('openCreateMatchModal', event)
+  }
+
+  $scope.openCreateBoardMap = function(event) {
+    $scope.$emit('openCreateBoardMapModal', event)
   }
 
   

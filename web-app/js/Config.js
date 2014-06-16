@@ -15,12 +15,17 @@ imperilApp.config(function($routeProvider, $locationProvider) {
     templateUrl : '/pages/match',
     controller : 'MainController'
   })
-  // route for the match page
+  // route for the settings page
+  .when('/boardMap', {
+    templateUrl : '/pages/boardmap',
+    controller : 'MainController'
+  })
+  // route for the editBoardMap page
   .when('/settings', {
     templateUrl : '/pages/settings',
     controller : 'MainController'
   })
-  // route for the match page
+  // route for the tools page
   .when('/tools', {
     templateUrl : '/pages/tools',
     controller : 'MainController'

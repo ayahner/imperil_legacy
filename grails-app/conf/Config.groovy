@@ -1,3 +1,4 @@
+
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
@@ -157,7 +158,7 @@ log4j = {
   // Set for a specific controller in the default package
 
   trace 'grails.app.controllers',
-      'grails.app.domain'
+      'grails.app.domain', 'com.imperil'
 }
 
 

@@ -1,3 +1,4 @@
+
 /**
  * Match Controller
  */
@@ -10,20 +11,24 @@ var MatchController = function($rootScope, $scope, $http, $routeParams, $log) {
   $scope.continents = []
   $scope.territories = []
   $scope.edgeMap = {}
+  $scope.selectedContinent = {}
   $scope.selectedTerritory = {}
 
-  var mapOptions = {
-    center : new google.maps.LatLng(-34.397, 150.644),
-    zoom : 8
-  };
-
-  $scope.map = new google.maps.Map(document.getElementById("matchMap"), mapOptions);
-
-  // function initialize() {
-  // }
-  // google.maps.event.addDomListener(window, 'load', initialize);
-
   console.log('requesting: /match/show');
+
+  $scope.$watch('selectedContinent', function(newValue, oldValue) {
+    if (newValue.hasOwnProperty('territories')) {
+      $scope.$emit('fitBounds', newValue.territories)
+      console.log('emitting \'fitBounds\'')
+    }
+  }, true);
+
+  $scope.$watch('selectedTerritory', function(newValue, oldValue) {
+    if (newValue.hasOwnProperty('geoLocations')) {
+      $scope.$emit('fitBounds', [ newValue ])
+      console.log('emitting \'fitBounds\'')
+    }
+  }, true);
 
   $scope.enableAddArmy = function(territory) {
     return $scope.match.isMyTurn// && territory.ownedByMe && $scope.match.state
@@ -33,9 +38,31 @@ var MatchController = function($rootScope, $scope, $http, $routeParams, $log) {
 
   $scope.refresh = function() {
     console.log('refresh called')
+    $scope.updateMatch($routeParams.id)
+  }
+
+  $scope.selectContinent = function(event, continent) {
+    var currentTarget = $(event.currentTarget)
+    currentTarget.closest('table').find('tr').removeClass('active')
+    currentTarget.addClass('active')
+    console.log('selecting continent: ' + continent.name)
+    $scope.selectedContinent = continent
+    $scope.territories = continent.territories
+  }
+
+  $scope.selectTerritory = function(event, territory) {
+    var currentTarget = $(event.currentTarget)
+    currentTarget.closest('table').find('tr').removeClass('active')
+    currentTarget.addClass('active')
+    console.log('selecting territory: ' + territory.name)
+    $scope.selectedTerritory = territory
+  }
+
+  $scope.updateMatch = function(id) {
+    console.log('refresh called')
     $http.get('/match/show', {
       params : {
-        id : $routeParams.id
+        id : id
       }
     }).success(function(data, status, headers, config) {
       console.log('success: match: ' + data.name + ' for map: ' + data.boardMap.name);
@@ -60,8 +87,6 @@ var MatchController = function($rootScope, $scope, $http, $routeParams, $log) {
         count : count
       }
     }).success(function(data, status, headers, config) {
-      // console.log('success: added: ' + data.name + ' for map: ' +
-      // data.boardMap.name);
       $scope.refresh()
     }).error(function(data, status, headers, config) {
       console.log('error in addArmies for id: ' + data.id);

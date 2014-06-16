@@ -14,22 +14,24 @@ class PlayerController {
   def show() {
     def paramId = params.id
     Player result = Player.get(paramId)
-    render result as JSON
+    JSON.use('SIMPLE') { render result as JSON }
   }
 
   def listMine() {
     def currentUser = springSecurityService.currentUser
     def result = Player.findAllByUser(currentUser)
-    render result as JSON
+    JSON.use('SIMPLE') { render result as JSON }
   }
 
   def list() {
     def matchId = params.matchId
+    def result
     if (matchId) {
       Match match = Match.get(matchId)
-      render Player.findAllByMatch(match) as JSON
+      result = Player.findAllByMatch(match)
     } else {
-      render Player.list() as JSON
+      result = Player.list()
     }
+    JSON.use('SIMPLE') { render result as JSON }
   }
 }
