@@ -13,7 +13,7 @@
     <div class="item">
       <div class="copyright">
         <g:message code="application.title" />
-        &copy;2014&nbsp;&nbsp;
+        &copy;2014&nbsp;Version <g:meta name="app.version"/>&nbsp;Built with Grails <g:meta name="app.grails.version"/>
       </div>
     </div>
     <div class="right menu">
