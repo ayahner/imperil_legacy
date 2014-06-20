@@ -13,6 +13,7 @@ import com.imperil.match.Match
 import com.imperil.player.Player
 import com.imperil.player.PlayerPreferences
 
+
 class CustomObjectMarshallers {
   SpringSecurityService  springSecurityService
   List marshallers = []
@@ -21,12 +22,21 @@ class CustomObjectMarshallers {
     marshallers.each{ it.register() }
   }
 
+  /*
+   * Simple Marshaller Maps
+   */
   Map getReturnMapSimple(BoardMap it) {
     def returnMap = [:]
     returnMap['id'] = it.id
     returnMap['createdBy'] = it.createdBy
     returnMap['name'] = it.name
     returnMap['description'] = it.description
+
+    def continents = it.continents
+    def territories = continents.collect { Continent continent -> continent.territories }.flatten()
+
+    returnMap['totalContinents'] = continents?.size()
+    returnMap['totalTerritories'] = territories?.size()
     return returnMap
   }
 
@@ -119,39 +129,14 @@ class CustomObjectMarshallers {
   }
 
   /*
-   * Very Detailed Marshallers  
+   * Detailed Marshaller Maps 
    */
   Map getReturnMap(BoardMap it) {
     def returnMap = getReturnMapSimple(it)
     def continents = it.continents
-    def listOfTerritories = []
-    continents.each { Continent continent ->
-      log.info('continent here')
-      log.info('continent: '+continent.name)
-      continent.territories.each { Territory territory ->
-        log.info('territory: '+continent.name + " -> "+territory.name)
-        listOfTerritories<<territory
-      }
-    }
-    def territories = listOfTerritories.flatten()
+    def territories = continents.collect { Continent continent -> continent.territories }.flatten()
     def edges = it.territoryEdges
     returnMap['continents'] = continents
-    returnMap['totalContinents'] = continents?.size()
-    returnMap['totalTerritories'] = territories?.size()
-    return returnMap
-  }
-
-  Map getReturnMapWithEdgeMap(BoardMap it) {
-    def returnMap = getReturnMap(it)
-    def continents = it.continents
-    def territories = it.continents?.collect { it.territories }?.flatten()
-    def edges = it.territoryEdges
-    returnMap['edgeMap'] = [
-      territoryCount:(territories?.size()),
-      edgeCount:(edges?.size()),
-      territories:territories,
-      edges:edges
-    ]
     return returnMap
   }
 
@@ -187,7 +172,7 @@ class CustomObjectMarshallers {
     def returnMap = getReturnMapSimple(it)
     returnMap['players'] = it.players
     returnMap['boardMap'] = it.boardMap
-    def territories = it.boardMap?.continents?.collect { Continent continent -> continent.territories  }?.flatten()
+    def territories = it.boardMap?.continents?.collect { Continent continent -> continent.territories }?.flatten()
     territories.each { Territory t ->
       t.garrison = Garrison.findByTerritoryAndMatch(t, it)
     }
@@ -207,6 +192,23 @@ class CustomObjectMarshallers {
 
   Map getReturnMap(AppUser it) {
     def returnMap = getReturnMapSimple(it)
+    return returnMap
+  }
+
+  /*
+   * Very Detailed Marshaller Maps
+   */
+  Map getReturnMapWithEdgeMap(BoardMap it) {
+    def returnMap = getReturnMap(it)
+    def continents = it.continents
+    def territories = it.continents?.collect { it.territories }?.flatten()
+    def edges = it.territoryEdges
+    returnMap['edgeMap'] = [
+      territoryCount:(territories?.size()),
+      edgeCount:(edges?.size()),
+      territories:territories,
+      edges:edges
+    ]
     return returnMap
   }
 }

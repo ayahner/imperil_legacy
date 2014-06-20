@@ -91,6 +91,8 @@ class InitializationHelper {
     ruleGroup.save(failOnError:true)
     //END Default Rules
 
+    Map <String, Map<String, List>> defaultLocationMap = TerritoryPropertyHelper.loadMapFromFile(DefaultMapConstants.DEFAULT_MAP_NAME)
+
     // Default maps
     final BoardMap boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)?:
         new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description', createdBy: andrewUser).save(failOnError: true)
@@ -98,13 +100,10 @@ class InitializationHelper {
       def continent = new Continent(name: continentName, description:continentName+' description', boardMap:boardMap).save(failOnError:true)
       continent.territories=territoryList.collect { name, edges ->
         Territory territory = new Territory(name: name, description:name+' description', continent:continent).save(failOnError:true)
-        Map<String, List<GeoLocation>> territoryPropertyMap = TerritoryPropertyHelper.COUNTRY_LOCATIONS.get(name);
-        List<GeoLocation> locations = territoryPropertyMap?.geoLocations;
-        if (locations != null && locations.size()>0) {
-          locations.each {
-            it.territory = territory
-            it.save(failOnError:true)
-          }
+        Map<String, List> territoryPropertyMap = defaultLocationMap.get(name);
+        List locations = territoryPropertyMap?.geoLocations;
+        territory.geoLocations = locations.collect {
+          GeoLocation geoLoc = new GeoLocation(latitude:it.latitude, longitude:it.longitude, territory:territory).save(failOnError:true)
         }
         return territory
       }

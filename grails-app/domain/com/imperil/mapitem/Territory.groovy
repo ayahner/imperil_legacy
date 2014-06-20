@@ -12,7 +12,7 @@ class Territory {
 
   Set sourceTerritoryEdges = []
   Set destinationTerritoryEdges = []
-  Set geoLocations = []
+  List geoLocations = []
 
   static belongsTo = [continent:Continent]
 

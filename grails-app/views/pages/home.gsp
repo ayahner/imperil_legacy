@@ -45,7 +45,7 @@
             <div class="ui right floated tiny green play button" ng-click="deleteBoardMap($event, map.id)">Delete</div>
             <div class="ui right floated tiny green play button" ng-click="openBoardMap($event, map.id)">Open</div>
 						<div class="header">
-							<i class="globe icon"></i>{{map.name}}
+							<i class="globe icon"></i>{{map.name}} <span class="label">{{map.totalTerritories}}</span>
 						</div>
 					</div>
 				</div>

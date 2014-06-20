@@ -138,7 +138,8 @@ log4j = {
   // Example of changing the log pattern for the default console appender:
   //
   //appenders {
-  console name:'stdout', layout:pattern(conversionPattern: '%d{dd MMM yyyy HH:mm:ss} %p %c{1}(%L) %m%n')
+  console name:'stdout', threshold:org.apache.log4j.Level.INFO, layout:pattern(conversionPattern: '%d{dd MMM yyyy HH:mm:ss} %p %c{1}(%L) %m%n')
+  rollingFile name:"fileAppender", maxBackupIndex:10, fileName:"imperil.log"
   //}
 
   error  'org.codehaus.groovy.grails.web.servlet',        // controllers
@@ -159,6 +160,13 @@ log4j = {
 
   trace 'grails.app.controllers',
       'grails.app.domain', 'com.imperil'
+
+  root {
+    info 'stdout'
+    trace 'fileAppender'
+    // warn 'stdout','file'
+    additivity = true
+  }
 }
 
 

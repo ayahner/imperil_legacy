@@ -4,5 +4,6 @@ modules = {
     resource url:'libs/angular/angular.js', disposition:'head'
     resource url:'libs/angular/angular-route.js', disposition:'head'
     resource url:'libs/angular/angular-sanitize.js', disposition:'head'
+    //    resource url:'libs/angular/angular-file-upload.js', disposition:'head'
   }
 }

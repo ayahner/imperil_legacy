@@ -59,18 +59,36 @@ i.left.rotated.fortyfive.icon,i.counterclockwise.rotated.fortyfive.icon
 }
 
 .hidable {
-  max-height: 200px;
+  max-height: 1000px;
   transition: 1s;
   overflow: hidden;
 }
 
+.tiny.hidable {
+  max-height: 700px;
+}
+
+.small.hidable {
+  max-height: 700px;
+}
+
 .large.hidable {
+  max-height: 2000px;
+}
+
+.huge.hidable {
+  max-height: 4000px;
+}
+
+.gigantic.hidable {
   max-height: 10000px;
 }
 
-.hidable.hidden {
+.hidable.hidden, .tiny.hidable.hidden, .small.hidable.hidden, .large.hidable.hidden, .huge.hidable.hidden, .gigantic.hidable.hidden {
   max-height: 0;
 }
+
+
 
 /**
  * Google Maps CSS entries
@@ -181,4 +199,25 @@ i.left.rotated.fortyfive.icon,i.counterclockwise.rotated.fortyfive.icon
 
 .ui.google.default.cursor.plus.button:active {
 	background-color: #D34836;
+}
+
+/*---------------
+     Neutral
+----------------*/
+.ui.neutral.buttons .button,
+.ui.neutral.button {
+  background-color: #FFD685 !important;
+  color: #FFFFFF;
+}
+.ui.neutral.buttons .button:hover,
+.ui.neutral.button:hover,
+.ui.neutral.buttons .active.button,
+.ui.neutral.button.active {
+  background-color: #FFD175 !important;
+  color: #FFFFFF;
+}
+.ui.neutral.buttons .button:active,
+.ui.neutral.button:active {
+  background-color: #FFCC66 !important;
+  color: #FFFFFF;
 }
