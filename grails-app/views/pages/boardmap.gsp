@@ -1,11 +1,11 @@
 
-<div class="ui basic segment" ng-controller="UploadController" ng-file-drop>
-	<div ng-controller="EditBoardMapController">
+<div class="ui basic segment" ng-controller="EditBoardMapController">
+	<div ng-controller="UploadController">
 		<div class="ui two column stackable grid">
 			<div class="six wide column">
-				<div class="ui red segment">
+				<div class="ui red segment" ng-file-drop ng-file-over="tertiary inverted">
 					<div class="ui left floated red ribbon label">Map: {{boardMap.name}}</div>
-					<div id='boardMapControls' class="ui right floated tiny icon shape buttons">
+					<div id='boardMapControls' class="ui right floated tiny icon overlay buttons">
 						<a class="ui button" ng-href="/boardMap/export?id={{boardMap.id}}" target="_self"> <i class="cloud download icon"></i>
 						</a>
 						<div class="or"></div>
@@ -39,18 +39,18 @@
 												<div class="bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
 											</div>
 										</td>
-										<td><span ng-show="item.isSuccess"><i class="positive tiny ok icon"></i></span> <span ng-show="item.isCancel"><i
-												class="neutral tiny ban circle icon"></i></span> <span ng-show="item.isError"><i class="negative tiny remove circle icon"></i></span></td>
+										<td><span ng-show="item.isSuccess"><i class="positive tiny ok icon"></i></span> <span ng-show="item.isCancel"><i class="neutral tiny ban circle icon"></i></span> <span
+											ng-show="item.isError"><i class="negative tiny remove circle icon"></i></span></td>
 										<td nowrap>
-												<button type="button" class="ui tiny positive left attached icon button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
-													<i class="upload icon"></i>
-												</button>
-												<button type="button" class="ui tiny neutral icon button" ng-click="item.cancel()" ng-disabled="!item.isUploading">
-													<i class="ban circle icon"></i>
-												</button>
-												<button type="button" class="ui tiny negative right attached icon button" ng-click="item.remove()">
-													<i class="trash icon"></i>
-												</button>
+											<button type="button" class="ui tiny positive left attached icon button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+												<i class="upload icon"></i>
+											</button>
+											<button type="button" class="ui tiny neutral icon button" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+												<i class="ban circle icon"></i>
+											</button>
+											<button type="button" class="ui tiny negative right attached icon button" ng-click="item.remove()">
+												<i class="trash icon"></i>
+											</button>
 										</td>
 									</tr>
 								</tbody>
@@ -104,7 +104,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="continent in continents" ng-click="selectContinent($event, continent)">
+											<tr ng-repeat="continent in continents" ng-class="continent == selectedContinent?'active':''" ng-click="selectContinent($event, continent)">
 												<td class="ten wide">{{continent.name}}</td>
 												<td class="six wide">{{continent.territories.length}}</td>
 											</tr>
@@ -121,7 +121,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="territory in territories" ng-click="selectTerritory($event, territory)">
+											<tr ng-repeat="territory in territories" ng-class="territory == selectedTerritory?'active':''" ng-click="selectTerritory($event, territory)">
 												<td class="five wide">{{territory.name}}</td>
 												<td class="five wide">{{territory.garrison.owner.name}}</td>
 												<td class="three wide"></td>
@@ -144,23 +144,41 @@
 									<th class="six wide">Latitude</th>
 									<th class="six wide">Longitude</th>
 									<th class="four wide">Zoom</th>
+                  <th class="four wide">Territory</th>
+                  <th class="four wide">Overlay Territory</th>
+                  <th class="four wide">Pending Save</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
 									<td class="six wide">{{lastLatitude}}</td>
 									<td class="six wide">{{lastLongitude}}</td>
-									<td class="four wide">{{lastZoom}}</td>
+									<td class="two wide">{{lastZoom}}</td>
+									<td class="two wide">{{selectedTerritory.name}}</td>
+									<td class="two wide">{{selectedOverlay.territory.name}}</td>
+									<td class="two wide">{{selectedOverlayPendingSave}}</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
-					<div id='shapecontrols' class="ui icon shape buttons">
-						<div class="ui cancel shape button" ng-click="deleteShape()">
-							<i class="bolt icon"></i>
+					<div id='overlaycontrols' class="ui icon overlay buttons">
+            <div class="ui tiny animated remove overlay button" ng-class="{'disabled': selectedOverlay == null }" ng-click="deleteOverlay()">
+              <div class="hidden content">Delete</div>
+              <div class="visible content">
+                <i class="trash icon"></i>
+              </div>
+            </div>
+						<div class="ui tiny animated edit overlay button" ng-class="{'disabled': selectedTerritory == null || selectedOverlay == null || !selectedOverlayPendingSave }" ng-click="cancelOverlayChanges()">
+							<div class="hidden content">Cancel</div>
+							<div class="visible content">
+								<i class="remove icon"></i>
+							</div>
 						</div>
-						<div class="ui complete shape button" ng-click="setShapeOnSelectedTerritory()">
-							<i class="add icon"></i>
+						<div class="ui tiny animated cancel overlay button" ng-class="{'disabled': selectedTerritory == null || selectedOverlay == null || !selectedOverlayPendingSave }" ng-click="saveOverlayChanges()">
+							<div class="hidden content">Save</div>
+							<div class="visible content">
+								<i class="save icon"></i>
+							</div>
 						</div>
 					</div>
 					<div id="boardMapSegment" class="ui segment">

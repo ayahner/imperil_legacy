@@ -20,7 +20,7 @@ public class TerritoryPropertyHelper {
 
   public static Map <String, Map<String, List>> loadMapFromCsvReader(Map <String, Map<String, List>> locationMap, csvReader) {
     new CSVMapReader(csvReader).each { map ->
-      String name = map['name']
+      String name = map['territory']
       if (locationMap.get(name)==null) {
         locationMap.put(name, [geoLocations:[]])
       }

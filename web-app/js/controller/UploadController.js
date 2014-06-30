@@ -4,36 +4,48 @@
 
 var UploadController = function($scope, $fileUploader, $timeout) {
   'use strict';
-  $scope.boardMapId
-  
+
   // create a uploader with options
   var uploader = $scope.uploader = $fileUploader.create({
     scope : $scope, // to automatically update the html. Default: $rootScope
     url : '/boardMap/upload',
-    formData : [ {
-      id : $scope.boardMapId
-    } ],
     filters : [ function(item) { // first user filter
       return item.name.endsWith(".csv")
     } ]
+  });
+
+  $scope.$watch('boardMap', function(newVal, oldVal) {
+    if (newVal != null) {
+      console.log('newVal.id: ' + newVal.id)
+      uploader.formData = [ {
+        id : $scope.boardMap.id
+      } ]
+    }
+
   });
 
   // REGISTER HANDLERS
 
   uploader.bind('afteraddingfile', function(event, item) {
     console.info('After adding a file', item);
+    $scope.showUploadDetails = true
   });
 
   uploader.bind('whenaddingfilefailed', function(event, item) {
     console.info('When adding a file failed', item);
+    $scope.showUploadDetails = true
   });
 
   uploader.bind('afteraddingall', function(event, items) {
     console.info('After adding all files', items);
+    $scope.showUploadDetails = true
   });
 
   uploader.bind('beforeupload', function(event, item) {
-    console.info('Before upload', item);
+    console.info('Before upload - for boardMap: ' + $scope.boardMap.id, item);
+    uploader.formData = [ {
+      id : $scope.boardMap.id
+    } ]
   });
 
   uploader.bind('progress', function(event, item, progress) {
@@ -64,8 +76,8 @@ var UploadController = function($scope, $fileUploader, $timeout) {
     console.info('Complete all', items);
   });
 
-  $scope.uploadClick = function(id) {
+  $scope.uploadClick = function() {
     $scope.showUploadDetails = true
-    $('#uploadInput').click(id)
+    $('#uploadInput').click()
   }
 }

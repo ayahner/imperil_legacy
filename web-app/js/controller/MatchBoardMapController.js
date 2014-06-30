@@ -59,8 +59,10 @@ var MatchBoardMapController = function($rootScope, $scope, $http, $routeParams, 
 
   $scope.fitBounds = function(territoryArray) {
     var bounds = MapUtils.convertTerritoriesToBounds(territoryArray)
-    map.fitBounds(bounds);
-    $scope.updateLastFromMap()
+    if (bounds != null) {
+      map.fitBounds(bounds);
+      $scope.updateLastFromMap()
+    }
   }
 
   /*

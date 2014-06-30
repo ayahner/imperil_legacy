@@ -14,6 +14,7 @@ import com.dynamix.user.AppUser
 import com.imperil.setup.TerritoryPropertyHelper
 
 
+
 class BoardMapController {
 
   SpringSecurityService  springSecurityService
@@ -29,6 +30,30 @@ class BoardMapController {
     def paramId = params.id
     BoardMap result = BoardMap.get(paramId)
     JSON.use('VERY_DETAILED') { render result as JSON }
+  }
+
+  def updateGeoLocations() {
+    log.debug("\$request.JSON: $request.JSON")
+    String territoryIdStr = request.JSON.id
+    List locations = request.JSON.locations
+
+    Long territoryId = Long.valueOf(territoryIdStr)
+    Territory territory = Territory.get(territoryId)
+
+    BoardMap.withTransaction { TransactionStatus status ->
+      try {
+        GeoLocation.executeUpdate("delete GeoLocation g where g.territory = ?", [territory])
+        territory.geoLocations = locations.collect {
+          GeoLocation geoLoc = new GeoLocation(latitude:it.latitude, longitude:it.longitude, territory:territory).save(failOnError:true)
+        }
+      } catch (Exception e) {
+        log.error(e.getMessage())
+        status.setRollbackOnly();
+        response.sendError(500, (e != null?e.getMessage():"null exception"))
+        return
+      }
+    }
+    JSON.use('VERY_DETAILED') { render territory as JSON }
   }
 
   def create() {
@@ -134,7 +159,8 @@ class BoardMapController {
     try {
       writer = new StringWriter()
       CSVWriter csvWriter = new CSVWriter(writer, {
-        name { it.name }
+        continent { it.continent }
+        territory { it.territory }
         latitude { it.latitude }
         longitude { it.longitude }
       })
@@ -142,7 +168,7 @@ class BoardMapController {
       boardMap.continents.each { Continent continent ->
         continent.territories.each { Territory territory ->
           territory.geoLocations.each { GeoLocation geoLocation ->
-            csvWriter << [name:territory.name, latitude: geoLocation.latitude, longitude: geoLocation.longitude]
+            csvWriter << [continent:continent.name, territory:territory.name, latitude: geoLocation.latitude, longitude: geoLocation.longitude]
           }
         }
       }
@@ -166,26 +192,38 @@ class BoardMapController {
         render(status: 403, text: "cannot import empty boardmap file")
         return
       }
-      Map params = params
-      Long id = params.id as Long
+      Map params = request.multipartParameters
+      def idString = params.id[0]
+      Long id = Long.valueOf(idString)
       Map <String, Map<String, List>> locationMap = TerritoryPropertyHelper.loadMapFromReader(file.getInputStream().toCsvReader())
-      //      BoardMap.withTransaction { TransactionStatus status ->
-      try {
-        BoardMap boardMap = BoardMap.get(id)
-        boardMap.continents.each { Continent continent ->
-          continent.territories.each { Territory territory ->
-            GeoLocation.deleteAll(territory.geoLocations)
-          }
-        }
-      } catch (Exception e) {
-        log.error(e.getMessage())
-        //        status.setRollbackOnly();
-        response.sendError(500, (e != null?e.getMessage():"null exception"))
-        return
-      }
-      //      }
 
-      response.sendError(200, 'Done')
+      BoardMap.withTransaction { TransactionStatus status ->
+        try {
+          BoardMap boardMap = BoardMap.get(id)
+          if (boardMap == null) {
+            throw new Exception("Boardmap not found for id: $id")
+          }
+
+          List territories = Territory.findAll("from Territory t where t.continent.boardMap=?", [boardMap])
+
+          locationMap.each { String territoryName, Map<String, List> map ->
+            if (map.geoLocations != null && map.geoLocations.size()>0) {
+              Territory territory = territories.find { it.name == territoryName }
+              GeoLocation.executeUpdate("delete GeoLocation g where g.territory = ?", [territory])
+              territory.geoLocations = map.geoLocations.collect {
+                GeoLocation geoLoc = new GeoLocation(latitude:it.latitude, longitude:it.longitude, territory:territory).save(failOnError:true)
+              }
+            }
+          }
+        } catch (Exception e) {
+          log.error(e.getMessage())
+          status.setRollbackOnly();
+          response.sendError(500, (e != null?e.getMessage():"null exception"))
+          return
+        }
+      }
+
+      render(status: 200, text: "done")
     } catch (Exception e) {
       render(status: 403, text: "error importing file: "+ e == null?"null exception":e.getMessage())
     }
