@@ -3,32 +3,44 @@
  * Match Controller
  */
 var MatchController = function($rootScope, $scope, $http, $routeParams, $log) {
-  $scope.match = {}
-  $scope.currentPlayer = {}
-  $scope.currentUser = {}
+  $scope.match = null
+  $scope.currentPlayer = null
   $scope.players = []
-  $scope.boardMap = {}
-  $scope.continents = []
-  $scope.territories = []
-  $scope.edgeMap = {}
-  $scope.selectedContinent = {}
-  $scope.selectedTerritory = {}
+  
+  $scope.boardMap = null
+  $scope.selectedContinent = null
+  $scope.selectedTerritory = null
 
   console.log('requesting: /match/show');
 
+  //emit the continents update event
+  $scope.$watch('boardMap', function(newValue, oldValue) {
+    $rootScope.$emit('updateMapView', newValue == null?null:newValue.continents)
+  }, true);
+
   $scope.$watch('selectedContinent', function(newValue, oldValue) {
-    if (newValue.hasOwnProperty('territories')) {
+    $scope.selectedTerritory = null;
+    if (newValue != null && newValue.hasOwnProperty('territories')) {
       $scope.$emit('fitBounds', newValue.territories)
       console.log('emitting \'fitBounds\'')
     }
   }, true);
 
   $scope.$watch('selectedTerritory', function(newValue, oldValue) {
-    if (newValue.hasOwnProperty('geoLocations')) {
+    $rootScope.$emit('territorySelected', newValue)
+
+    if (newValue != null && newValue.hasOwnProperty('geoLocations')) {
       $scope.$emit('fitBounds', [ newValue ])
       console.log('emitting \'fitBounds\'')
     }
   }, true);
+
+  $rootScope.$on('overlayClicked', function(event, overlay) {
+    $scope.selectedContinent = overlay.continent
+    $scope.$apply()
+    $scope.selectedTerritory = overlay.territory
+    $scope.$apply()
+  })
 
   $scope.enableAddArmy = function(territory) {
     return $scope.match.isMyTurn// && territory.ownedByMe && $scope.match.state
@@ -47,7 +59,6 @@ var MatchController = function($rootScope, $scope, $http, $routeParams, $log) {
     currentTarget.addClass('active')
     console.log('selecting continent: ' + continent.name)
     $scope.selectedContinent = continent
-    $scope.territories = continent.territories
   }
 
   $scope.selectTerritory = function(event, territory) {
@@ -70,9 +81,6 @@ var MatchController = function($rootScope, $scope, $http, $routeParams, $log) {
       $scope.currentPlayer = data.currentPlayer
       $scope.players = data.players
       $scope.boardMap = data.boardMap
-      $scope.continents = data.boardMap.continents
-      $scope.territories = data.boardMap.territories
-      $scope.edgeMap = data.boardMap.edgeMap
     }).error(function(data, status, headers, config) {
       console.log('error in showMatch for id: ' + data.id);
     });
