@@ -83,8 +83,9 @@ class InitializationHelper {
     // END Requestmap
 
     //Default Rules
-    if (RuleGroup.findByName(RuleConstants.DEFAULT_RULE_GROUP_NAME) == null) {
-      RuleGroup ruleGroup = new RuleGroup(name:RuleConstants.DEFAULT_RULE_GROUP_NAME, description:RuleConstants.DEFAULT_RULE_GROUP_NAME);
+    RuleGroup ruleGroup = RuleGroup.findByName(RuleConstants.DEFAULT_RULE_GROUP_NAME)
+    if (ruleGroup == null) {
+      ruleGroup = new RuleGroup(name:RuleConstants.DEFAULT_RULE_GROUP_NAME, description:RuleConstants.DEFAULT_RULE_GROUP_NAME);
       ruleGroup.rules=[:]
       RuleConstants.DEFAULT_STARTING_ARMY_COUNT.eachWithIndex { count, i ->
         ruleGroup.rules.put("${RuleConstants.RULE_KEY_STARTING_ARMY_COUNT}.${(i+3)}", new Rule(ruleGroup:ruleGroup, key:"${RuleConstants.RULE_KEY_STARTING_ARMY_COUNT}.${(i+3)}", value:count, type:Integer.class, name:"Starting armies for ${(i+3)} players"))
@@ -94,9 +95,10 @@ class InitializationHelper {
     }
 
     // Default maps
-    if (BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME) == null) {
+    BoardMap boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)
+    if ( boardMap == null) {
       Map <String, Map<String, List>> defaultLocationMap = TerritoryPropertyHelper.loadMapFromFile(DefaultMapConstants.DEFAULT_MAP_NAME)
-      final BoardMap boardMap = new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description', createdBy: andrewUser).save(failOnError: true)
+      boardMap = new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description', createdBy: andrewUser).save(failOnError: true)
       def continents = DefaultMapConstants.CONTINENTS.collect { String continentName, Map<String,Map<String,List<String>>> territoryList ->
         def continent = new Continent(name: continentName, description:continentName+' description', boardMap:boardMap).save(failOnError:true)
         continent.territories=territoryList.collect { name, edges ->
