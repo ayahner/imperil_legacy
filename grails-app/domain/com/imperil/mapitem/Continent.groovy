@@ -14,7 +14,6 @@ class Continent {
   static mapping = { sort "name" }
   static constraints = {
     name blank: false
-    //    name unique: 'boardMap'
     boardMap(nullable:false)
   }
 }

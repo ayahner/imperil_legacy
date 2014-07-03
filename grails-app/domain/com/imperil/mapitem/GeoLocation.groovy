@@ -9,11 +9,13 @@ class GeoLocation {
 
   Double latitude
   Double longitude
+  Territory territory
 
   static belongsTo = [territory:Territory]
 
   static constraints = {
-    latitude blank:false
-    longitude blank:false
+    latitude blank: false
+    longitude blank: false
+    territory(nullable:false)
   }
 }

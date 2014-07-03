@@ -4,6 +4,19 @@
 function MapUtils() {
 }
 
+MapUtils.DEFAULT_FILL_OPACITY = 0.4
+MapUtils.DEFAULT_STROKE_OPACITY = 0.8
+
+MapUtils.DEFAULT_MAP_COLOR_LIST = [ //
+colorNameToHex('brown'),//
+colorNameToHex('black'),//
+colorNameToHex('purple'),//
+colorNameToHex('blue'),//
+colorNameToHex('green'),//
+colorNameToHex('orange'),//
+colorNameToHex('red'),//
+colorNameToHex('darkblue') ]
+
 MapUtils.convertTerritoriesToBounds = function(territoryArray) {
   var locArray = []
 
@@ -19,16 +32,14 @@ MapUtils.convertTerritoriesToBounds = function(territoryArray) {
     });
   }
 
-  console.log('found '+locArray.length+' geoLocation points')
+  var result = null
+  if (locArray.length > 1) {
+    result = new google.maps.LatLngBounds()
+    $.each(locArray, function(idx, item) {
+      result.extend(item)
+    });
+  }
 
-  var result = new google.maps.LatLngBounds()
-
-  $.each(locArray, function(idx, item) {
-    console.log('found '+ item)
-    result.extend(item)
-  });
-
-  console.log('bounds are: '+ result)
   return result;
 
 }

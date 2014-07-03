@@ -46,31 +46,31 @@ class InitializationHelper {
     def andrewPlayerPreferences = PlayerPreferences.findByName('andrew')?:new PlayerPreferences(name: 'andrew',description:'andrew description', user: andrewUser, enabled:true).save(failOnError: true);
 
     // END User definitions
+    if (AppUserToRole.findByAppUser(andrewUser) == null) {
+      // Default role creation/mapping
+      Map<Role, List<AppUser>> roleMap = [:]
+      roleMap.put(playRole, [
+        player1User,
+        player2User,
+        joeUser,
+        andrewUser
+      ])
+      roleMap.put(modRole, [
+        mod1User,
+        mod2User,
+        joeUser,
+        andrewUser
+      ])
+      roleMap.put(adminRole, [joeUser, andrewUser])
 
-    // Default role creation/mapping
-    Map<Role, List<AppUser>> roleMap = [:]
-    roleMap.put(playRole, [
-      player1User,
-      player2User,
-      joeUser,
-      andrewUser
-    ])
-    roleMap.put(modRole, [
-      mod1User,
-      mod2User,
-      joeUser,
-      andrewUser
-    ])
-    roleMap.put(adminRole, [joeUser, andrewUser])
-
-    roleMap.each() { Role role, List<AppUser> users ->
-      for (AppUser user : users) {
-        if (!user.authorities.contains(role)){
-          new AppUserToRole(appUser: user, role: role).save(failOnError: true);
+      roleMap.each() { Role role, List<AppUser> users ->
+        for (AppUser user : users) {
+          if (!user.authorities.contains(role)){
+            new AppUserToRole(appUser: user, role: role).save(failOnError: true);
+          }
         }
       }
-    }
-    // END Default role creation/mapping
+    }    // END Default role creation/mapping
 
     // Requestmap
     Requestmap.findByUrl('/semantic/**')?:new Requestmap(url: '/semantic/**', configAttribute: 'permitAll').save(failOnError:true)
@@ -83,77 +83,78 @@ class InitializationHelper {
     // END Requestmap
 
     //Default Rules
-    RuleGroup ruleGroup = new RuleGroup(name:RuleConstants.DEFAULT_RULE_GROUP_NAME, description:RuleConstants.DEFAULT_RULE_GROUP_NAME);
-    ruleGroup.rules=[:]
-    RuleConstants.DEFAULT_STARTING_ARMY_COUNT.eachWithIndex { count, i ->
-      ruleGroup.rules.put("${RuleConstants.RULE_KEY_STARTING_ARMY_COUNT}.${(i+3)}", new Rule(ruleGroup:ruleGroup, key:"${RuleConstants.RULE_KEY_STARTING_ARMY_COUNT}.${(i+3)}", value:count, type:Integer.class, name:"Starting armies for ${(i+3)} players"))
+    if (RuleGroup.findByName(RuleConstants.DEFAULT_RULE_GROUP_NAME) == null) {
+      RuleGroup ruleGroup = new RuleGroup(name:RuleConstants.DEFAULT_RULE_GROUP_NAME, description:RuleConstants.DEFAULT_RULE_GROUP_NAME);
+      ruleGroup.rules=[:]
+      RuleConstants.DEFAULT_STARTING_ARMY_COUNT.eachWithIndex { count, i ->
+        ruleGroup.rules.put("${RuleConstants.RULE_KEY_STARTING_ARMY_COUNT}.${(i+3)}", new Rule(ruleGroup:ruleGroup, key:"${RuleConstants.RULE_KEY_STARTING_ARMY_COUNT}.${(i+3)}", value:count, type:Integer.class, name:"Starting armies for ${(i+3)} players"))
+      }
+      ruleGroup.save(failOnError:true)
+      //END Default Rules
     }
-    ruleGroup.save(failOnError:true)
-    //END Default Rules
 
     // Default maps
-    final BoardMap boardMap = BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME)?:
-        new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description', createdBy: andrewUser).save(failOnError: true)
-    def continents = DefaultMapConstants.CONTINENTS.collect { String continentName, Map<String,Map<String,List<String>>> territoryList ->
-      def continent = new Continent(name: continentName, description:continentName+' description', boardMap:boardMap).save(failOnError:true)
-      continent.territories=territoryList.collect { name, edges ->
-        Territory territory = new Territory(name: name, description:name+' description', continent:continent).save(failOnError:true)
-        Map<String, List<GeoLocation>> territoryPropertyMap = TerritoryPropertyHelper.COUNTRY_LOCATIONS.get(name);
-        List<GeoLocation> locations = territoryPropertyMap?.geoLocations;
-        if (locations != null && locations.size()>0) {
-          locations.each {
-            it.territory = territory
-            it.save(failOnError:true)
+    if (BoardMap.findByName(DefaultMapConstants.DEFAULT_MAP_NAME) == null) {
+      Map <String, Map<String, List>> defaultLocationMap = TerritoryPropertyHelper.loadMapFromFile(DefaultMapConstants.DEFAULT_MAP_NAME)
+      final BoardMap boardMap = new BoardMap(name: DefaultMapConstants.DEFAULT_MAP_NAME, description:DefaultMapConstants.DEFAULT_MAP_NAME+' description', createdBy: andrewUser).save(failOnError: true)
+      def continents = DefaultMapConstants.CONTINENTS.collect { String continentName, Map<String,Map<String,List<String>>> territoryList ->
+        def continent = new Continent(name: continentName, description:continentName+' description', boardMap:boardMap).save(failOnError:true)
+        continent.territories=territoryList.collect { name, edges ->
+          Territory territory = new Territory(name: name, description:name+' description', continent:continent).save(failOnError:true)
+          Map<String, List> territoryPropertyMap = defaultLocationMap.get(name);
+          List locations = territoryPropertyMap?.geoLocations;
+          territory.geoLocations = locations.collect {
+            GeoLocation geoLoc = new GeoLocation(latitude:it.latitude, longitude:it.longitude, territory:territory).save(failOnError:true)
+          }
+          return territory
+        }
+      }
+      DefaultMapConstants.CONTINENTS.collect { String continentName, Map<String,List<String>> territoryMap ->
+        territoryMap.each { sourceName, destinationEdges ->
+          Territory source = Territory.findByName(sourceName)
+          destinationEdges.each { edgeName ->
+            Territory destination = Territory.findByName(edgeName)
+            log.trace("createing bi-directional edge between $source.name($source.id) and $destination.name($destination.id)")
+            new TerritoryEdge(boardMap:boardMap, sourceTerritory:source, destinationTerritory:destination).save(failOnError:true)
           }
         }
-        return territory
       }
-    }
-    DefaultMapConstants.CONTINENTS.collect { String continentName, Map<String,List<String>> territoryMap ->
-      territoryMap.each { sourceName, destinationEdges ->
-        Territory source = Territory.findByName(sourceName)
-        destinationEdges.each { edgeName ->
-          Territory destination = Territory.findByName(edgeName)
-          log.trace("createing bi-directional edge between $source.name($source.id) and $destination.name($destination.id)")
-          new TerritoryEdge(boardMap:boardMap, sourceTerritory:source, destinationTerritory:destination).save(failOnError:true)
-        }
-      }
-    }
 
-    // END default maps
-    //    boardMap = BoardMap.get(boardMap.id)
-    //sample matches
-    [
-      'Andrew vs Joe vs Player1 Choosing':[
-        state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
-          andrewPlayerPreferences,
-          joePlayerPreferences,
-          player1PlayerPreferences
-        ]
-      ], 'Andrew vs 2 players Last Choice':[
-        state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
-          andrewPlayerPreferences,
-          player1PlayerPreferences,
-          player2PlayerPreferences
-        ]
-      ],
-      'Joe vs 2 players':[
-        state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
-          joePlayerPreferences,
-          player1PlayerPreferences,
-          player2PlayerPreferences
-        ]
-      ],
-      'Free for All Playing':[
-        state:MatchStateEnum.PLAYING, prefList:[
-          andrewPlayerPreferences,
-          joePlayerPreferences,
-          player1PlayerPreferences,
-          player2PlayerPreferences
-        ]
-      ]].each {String matchName, Map<String, Object> prefMap ->
-      //      BoardMap copy = BoardMapController.cloneBoardMap(matchName, matchName, boardMap, boardMap.createdBy)
-      InitializationHelper.generateMap(matchName, matchName, prefMap.prefList, boardMap, prefMap.state, ruleGroup)
+      // END default maps
+      //    boardMap = BoardMap.get(boardMap.id)
+      //sample matches
+      [
+        'Andrew vs Joe vs Player1 Choosing':[
+          state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
+            andrewPlayerPreferences,
+            joePlayerPreferences,
+            player1PlayerPreferences
+          ]
+        ], 'Andrew vs 2 players Last Choice':[
+          state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
+            andrewPlayerPreferences,
+            player1PlayerPreferences,
+            player2PlayerPreferences
+          ]
+        ],
+        'Joe vs 2 players':[
+          state:MatchStateEnum.CHOOSING_TERRITORIES, prefList:[
+            joePlayerPreferences,
+            player1PlayerPreferences,
+            player2PlayerPreferences
+          ]
+        ],
+        'Free for All Playing':[
+          state:MatchStateEnum.PLAYING, prefList:[
+            andrewPlayerPreferences,
+            joePlayerPreferences,
+            player1PlayerPreferences,
+            player2PlayerPreferences
+          ]
+        ]].each {String matchName, Map<String, Object> prefMap ->
+        //      BoardMap copy = BoardMapController.cloneBoardMap(matchName, matchName, boardMap, boardMap.createdBy)
+        InitializationHelper.generateMap(matchName, matchName, prefMap.prefList, boardMap, prefMap.state, ruleGroup)
+      }
     }
   }
 

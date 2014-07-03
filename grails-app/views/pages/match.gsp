@@ -58,7 +58,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="continent in continents" ng-click="selectContinent($event, continent)">
+											<tr ng-repeat="continent in boardMap.continents" ng-click="selectContinent($event, continent)">
 												<td class="twelve wide">{{continent.name}}</td>
 												<td class="four wide">{{continent.territories.length}}</td>
 											</tr>
@@ -76,7 +76,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="territory in territories" ng-click="selectTerritory($event, territory)">
+											<tr ng-repeat="territory in selectedContinent.territories" ng-click="selectTerritory($event, territory)">
 												<td class="five wide">{{territory.name}}</td>
 												<td class="five wide">{{territory.garrison.owner.name}}</td>
                         <td class="three wide">{{territory.armyCount}}</td>
@@ -93,7 +93,7 @@
 				</div>
 			</div>
 			<div class="ten wide column">
-				<div class="ui green segment" ng-controller="MatchBoardMapController">
+				<div class="ui green segment" ng-controller="BoardMapViewController">
 					<div class="ui green ribbon label">Map</div>
 					<div>
 						<table class="ui small compact basic table">
@@ -113,9 +113,29 @@
 							</tbody>
 						</table>
 					</div>
-					<div id="matchMapSegment" class="ui segment">
-						<div id="matchMap"></div>
-					</div>
+          <div id='overlaycontrols' class="ui icon overlay buttons">
+            <div class="ui tiny animated remove overlay button" ng-class="{'disabled': selectedOverlay == null }" ng-click="deleteOverlay()">
+              <div class="hidden content">Attack</div>
+              <div class="visible content">
+                <i class="trash icon"></i>
+              </div>
+            </div>
+            <div class="ui tiny animated edit overlay button" ng-class="{'disabled': selectedTerritory == null || selectedOverlay == null || !selectedOverlayPendingSave }" ng-click="cancelOverlayChanges()">
+              <div class="hidden content">Move</div>
+              <div class="visible content">
+                <i class="remove icon"></i>
+              </div>
+            </div>
+            <div class="ui tiny animated cancel overlay button" ng-class="{'disabled': selectedTerritory == null || selectedOverlay == null || !selectedOverlayPendingSave }" ng-click="saveOverlayChanges()">
+              <div class="hidden content">End Turn</div>
+              <div class="visible content">
+                <i class="save icon"></i>
+              </div>
+            </div>
+          </div>
+          <div id="boardMapSegment" class="ui segment">
+            <div id="boardMap"></div>
+          </div>
 				</div>
 			</div>
 		</div>

@@ -21,6 +21,23 @@ grails.project.fork = [
   console: [maxMemory: 512, minMemory: 64, debug: false, maxPerm: 256]
 ]
 
+grails.tomcat.jvmArgs = [
+  "-server",
+  //  "-XX:MaxPermSize=512m",
+  //  "-XX:MaxNewSize=256m",
+  //  "-XX:NewSize=256m",
+  "-Xms768m",
+  "-Xmx1024m",
+  //  "-XX:SurvivorRatio=128",
+  //  "-XX:MaxTenuringThreshold=0",
+  //  "-XX:+UseTLAB",
+  //  "-XX:+UseConcMarkSweepGC",
+  //  "-XX:+CMSClassUnloadingEnabled",
+  //  "-XX:+CMSIncrementalMode",
+  //  "-XX:-UseGCOverheadLimit",
+  //  "-XX:+ExplicitGCInvokesConcurrent"
+]
+
 grails.project.dependency.resolver = "maven" // or ivy
 grails.project.dependency.resolution = {
   // inherit Grails' default dependencies
@@ -58,7 +75,7 @@ grails.project.dependency.resolution = {
 
   plugins {
     // plugins for the build system only
-    build ":tomcat:7.0.52.1"
+    build ":tomcat:7.0.54"
 
     // plugins for the compile step
     compile ":joda-time:1.4"
@@ -74,6 +91,9 @@ grails.project.dependency.resolution = {
     compile ':spring-security-oauth-facebook:0.1'
     compile ':spring-security-oauth-google:0.2'
     compile ":spring-security-oauth-twitter:0.1"
+
+    //imports
+    compile ":csv:0.3.1"
 
     // plugins needed at runtime but not for compilation
     runtime ":hibernate:3.6.10.13" // or ":hibernate4:4.3.4.1"
