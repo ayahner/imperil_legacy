@@ -21,6 +21,7 @@
 
 <r:layoutResources />
 <g:layoutHead />
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhH_BZfn7xYp224T4NosfkmOa50WDfmZs&libraries=drawing"></script>
 <script src="/semantic/javascript/semantic.js"></script>
 <link rel="stylesheet" href="/semantic/css/semantic.css" />
 <script src="/js/angular-file-upload.js"></script>
@@ -31,8 +32,8 @@
 <script src="/js/Service.js"></script>
 <script src="/js/controller/MainController.js"></script>
 <script src="/js/controller/HomeController.js"></script>
+<script src="/js/controller/BoardMapViewController.js"></script>
 <script src="/js/controller/MatchController.js"></script>
-<script src="/js/controller/MatchBoardMapController.js"></script>
 <script src="/js/controller/EditBoardMapController.js"></script>
 <script src="/js/controller/UploadController.js"></script>
 <script src="/js/controller/CreateMatchController.js"></script>
@@ -52,7 +53,6 @@
   ga('create', 'UA-51719353-1', 'imperil.herokuapp.com');
   ga('send', 'pageview');
 </script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhH_BZfn7xYp224T4NosfkmOa50WDfmZs&libraries=drawing"></script>
 <link rel="stylesheet" href="/css/Application.css" />
 </head>
 <body>

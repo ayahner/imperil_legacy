@@ -4,15 +4,18 @@
 function MapUtils() {
 }
 
+MapUtils.DEFAULT_FILL_OPACITY = 0.4
+MapUtils.DEFAULT_STROKE_OPACITY = 0.8
+
 MapUtils.DEFAULT_MAP_COLOR_LIST = [ //
-  colorNameToHex('brown'),//
-  colorNameToHex('black'),//
-  colorNameToHex('purple'),//
-  colorNameToHex('blue'),//
-  colorNameToHex('green'),//
-  colorNameToHex('orange'),//
-  colorNameToHex('red'),//
-  colorNameToHex('darkblue') ]
+colorNameToHex('brown'),//
+colorNameToHex('black'),//
+colorNameToHex('purple'),//
+colorNameToHex('blue'),//
+colorNameToHex('green'),//
+colorNameToHex('orange'),//
+colorNameToHex('red'),//
+colorNameToHex('darkblue') ]
 
 MapUtils.convertTerritoriesToBounds = function(territoryArray) {
   var locArray = []

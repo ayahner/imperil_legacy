@@ -104,7 +104,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="continent in continents" ng-class="continent == selectedContinent?'active':''" ng-click="selectContinent($event, continent)">
+											<tr ng-repeat="continent in boardMap.continents" ng-class="continent == selectedContinent?'active':''" ng-click="selectContinent($event, continent)">
 												<td class="ten wide">{{continent.name}}</td>
 												<td class="six wide">{{continent.territories.length}}</td>
 											</tr>
@@ -121,7 +121,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-repeat="territory in territories" ng-class="territory == selectedTerritory?'active':''" ng-click="selectTerritory($event, territory)">
+											<tr ng-repeat="territory in selectedContinent.territories" ng-class="territory == selectedTerritory?'active':''" ng-click="selectTerritory($event, territory)">
 												<td class="five wide">{{territory.name}}</td>
 												<td class="five wide">{{territory.garrison.owner.name}}</td>
 												<td class="three wide"></td>
@@ -135,50 +135,40 @@
 				</div>
 			</div>
 			<div class="ten wide column">
-				<div class="ui green segment">
+				<div class="ui green segment" ng-controller="BoardMapViewController">
 					<div class="ui green ribbon label">Map</div>
 					<div>
 						<table class="ui small compact basic table">
 							<thead>
 								<tr>
-									<th class="six wide">Latitude</th>
-									<th class="six wide">Longitude</th>
+									<th class="four wide">Latitude</th>
+									<th class="four wide">Longitude</th>
 									<th class="four wide">Zoom</th>
-                  <th class="four wide">Territory</th>
-                  <th class="four wide">Overlay Territory</th>
-                  <th class="four wide">Pending Save</th>
+									<th class="four wide">Pending Save</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
-									<td class="six wide">{{lastLatitude}}</td>
-									<td class="six wide">{{lastLongitude}}</td>
+									<td class="four wide">{{lastLatitude}}</td>
+									<td class="four wide">{{lastLongitude}}</td>
 									<td class="two wide">{{lastZoom}}</td>
-									<td class="two wide">{{selectedTerritory.name}}</td>
-									<td class="two wide">{{selectedOverlay.territory.name}}</td>
 									<td class="two wide">{{selectedOverlayPendingSave}}</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 					<div id='overlaycontrols' class="ui icon overlay buttons">
-            <div class="ui tiny animated remove overlay button" ng-class="{'disabled': selectedOverlay == null }" ng-click="deleteOverlay()">
-              <div class="hidden content">Delete</div>
-              <div class="visible content">
-                <i class="trash icon"></i>
-              </div>
-            </div>
-						<div class="ui tiny animated edit overlay button" ng-class="{'disabled': selectedTerritory == null || selectedOverlay == null || !selectedOverlayPendingSave }" ng-click="cancelOverlayChanges()">
-							<div class="hidden content">Cancel</div>
-							<div class="visible content">
-								<i class="remove icon"></i>
-							</div>
+						<div class="ui tiny add overlay button" ng-disabled="!showAddButton()" ng-class="{'disabled': !showAddButton() }" ng-click="addOverlay()">
+							<i class="add icon"></i>
 						</div>
-						<div class="ui tiny animated cancel overlay button" ng-class="{'disabled': selectedTerritory == null || selectedOverlay == null || !selectedOverlayPendingSave }" ng-click="saveOverlayChanges()">
-							<div class="hidden content">Save</div>
-							<div class="visible content">
-								<i class="save icon"></i>
-							</div>
+            <div class="ui tiny remove overlay button" ng-disabled="!showRemoveButton()" ng-class="{'disabled': !showRemoveButton() }" ng-click="removeOverlay()">
+              <i class="remove icon"></i>
+            </div>
+            <div class="ui tiny edit overlay button" ng-disabled="!showEditButton()" ng-class="{'disabled': !showEditButton() }" ng-click="editOverlay()">
+              <i class="edit icon"></i>
+            </div>
+						<div class="ui tiny save overlay button" ng-disabled="!showSaveButton()" ng-class="{'disabled': !showSaveButton() }" ng-click="saveOverlay()">
+							<i class="save icon"></i>
 						</div>
 					</div>
 					<div id="boardMapSegment" class="ui segment">
